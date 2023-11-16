@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "declarationMap": false,
+    "downlevelIteration": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "noImplicitAny": true,
+    "skipLibCheck": true,
+    "sourceMap": false,
+    "strict": true,
+    "strictNullChecks": true,
+    "target": "es2019"
+  },
+  "exclude": ["node_modules"]
+}
