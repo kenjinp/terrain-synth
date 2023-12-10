@@ -3,7 +3,7 @@
 // if fails, fallback to wasm
 
 import * as onnxruntimeWeb from "onnxruntime-web"
-import { loadModel, runModel } from "./Model"
+import { loadModel, runModel } from "./Model.utils"
 
 let model: onnxruntimeWeb.InferenceSession
 
