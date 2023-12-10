@@ -2,6 +2,7 @@ node_modules
 .DS_Store
 dist
 dist-ssr
+_dist
 *.local
 .log
 .env
@@ -9,3 +10,11 @@ dist-ssr
 out
 .next
 .turbo
+.virtual_documents
+data
+.ipynb_checkpoints
+__pycache__
+notebooks
+.terrain-gan
+# Disable for now until I can get this working
+.github 

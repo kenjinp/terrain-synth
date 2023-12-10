@@ -9,11 +9,21 @@ export const ExampleWrapper: React.FC<
   }>
 > = ({
   children,
-  controls = <CameraControls makeDefault maxZoom={100_000} />,
+  controls = (
+    <CameraControls
+      makeDefault
+      maxZoom={1_000}
+      minZoom={100}
+      maxDistance={15_000}
+      minPolarAngle={20 * (Math.PI / 180)}
+      maxPolarAngle={80 * (Math.PI / 180)}
+    />
+  ),
 }) => {
   return (
     <>
       <directionalLight intensity={2} />
+      <ambientLight intensity={1} />
       {children}
       {controls}
     </>

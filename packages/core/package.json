@@ -1,6 +1,6 @@
 {
-  "name": "@hello-worlds/core",
-  "version": "0.0.9",
+  "name": "@terrain-synth/core",
+  "version": "0.0.0",
   "license": "MIT",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -13,13 +13,11 @@
   "files": [
     "dist"
   ],
-  "dependencies": {
-    "rand-seed": "^1.0.1"
-  },
+  "dependencies": {},
   "keywords": [
-    "languages",
     "game",
-    "procedural generation"
+    "procedural generation",
+    "machine learning"
   ],
   "devDependencies": {
     "typescript": "^4.7.4"

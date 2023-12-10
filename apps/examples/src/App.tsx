@@ -7,9 +7,12 @@ import {
   useNavigate,
 } from "react-router-dom"
 
+import { Leva } from "leva"
 import { Canvas } from "./components/Canvas"
 import { ExampleWrapper } from "./components/ExampleWrapper"
+import { Footer } from "./components/footer/Footer"
 import Basic from "./examples/basic/Basic"
+import { UI } from "./tunnel"
 
 interface IRoute {
   name: string
@@ -38,7 +41,7 @@ const Header = () => {
 
   return (
     <header>
-      <a className="logo" href="https://github.com/kenjinp/hello-worlds">
+      {/* <a className="logo" href="https://github.com/kenjinp/hello-worlds">
         Hello Worlds
       </a>
       <select
@@ -50,13 +53,14 @@ const Header = () => {
             {route.name}
           </option>
         ))}
-      </select>
+      </select> */}
     </header>
   )
 }
 
 export default () => (
   <BrowserRouter>
+    <Leva hidden />
     <Header />
     <Routes>
       {routes.map(route => (
@@ -64,14 +68,22 @@ export default () => (
           path={route.path}
           key={route.path}
           element={
-            <Canvas>
-              <ExampleWrapper>
-                <route.component />
-              </ExampleWrapper>
-            </Canvas>
+            <>
+              <div id="ui">
+                {/* Anything that goes into the tunnel, we want to render here. */}
+                <UI.Out />
+              </div>
+
+              <Canvas>
+                <ExampleWrapper>
+                  <route.component />
+                </ExampleWrapper>
+              </Canvas>
+            </>
           }
         />
       ))}
     </Routes>
+    <Footer />
   </BrowserRouter>
 )

@@ -1,0 +1,8 @@
+config:
+  aws:region: us-west-2
+  terrain-synth.kenny.wtf:path: ../../_dist
+  terrain-synth.kenny.wtf:zoneName: kenny.wtf
+  terrain-synth.kenny.wtf:targetDomain: terrain-synth.kenny.wtf
+  terrain-synth.kenny.wtf:includeWWW: true
+  terrain-synth.kenny.wtf:errorDocument: 404.html
+  terrain-synth.kenny.wtf:indexDocument: index.html

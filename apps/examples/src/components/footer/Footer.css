@@ -1,0 +1,17 @@
+footer {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  position: fixed;
+  bottom: 0;
+  width: 100vw;
+  z-index: 999;
+  padding: 1em;
+  opacity: 0.5;
+  transition: opacity 300ms ease-in-out;
+  box-sizing: border-box;
+}
+
+footer:hover {
+  opacity: 1;
+}

@@ -23,7 +23,7 @@ export const Canvas: React.FC<
           top: 0,
           left: 0,
           zIndex: 1,
-          background: "pink",
+          background: "#3D4058",
         }
       }
     >

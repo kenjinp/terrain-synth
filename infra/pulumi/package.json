@@ -1,0 +1,17 @@
+{
+  "name": "@terrain-synth/pulumi",
+  "private": true,
+  "devDependencies": {
+    "@types/mime": "^3.0.1",
+    "@types/node": "^14"
+  },
+  "dependencies": {
+    "@pulumi/aws": "^6.13.2",
+    "@pulumi/pulumi": "^3.96.1",
+    "mime": "^3.0.0",
+    "typescript": "^4.0.0"
+  },
+  "workspaces": [
+    "packages/"
+  ]
+}

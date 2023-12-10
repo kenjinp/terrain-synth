@@ -14,5 +14,10 @@
     "strictNullChecks": true,
     "target": "es2019"
   },
+  "include": [
+    "../hello-worlds/packages/core/dist/esm",
+    "../hello-worlds/packages/planets/dist/esm",
+    "../hello-worlds/packages/react/dist/ems"
+  ],
   "exclude": ["node_modules"]
 }

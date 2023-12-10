@@ -1,7 +1,5 @@
-# `@hello-worlds/core`
+# `@terrain-synth/core`
 
-Core helpers and utils used across `@hello-worlds`
+Core helpers and utils used across `@terrain-synth`
 
 ## Docs
-
-Visit [https://worlds.kenny.wtf](https://worlds.kenny.wtf/intro) for documentation, examples, and external resources.

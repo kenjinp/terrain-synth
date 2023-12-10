@@ -14,6 +14,16 @@
   -webkit-text-size-adjust: 100%;
 }
 
+@font-face {
+  font-family: "Stoclet";
+  src: url("Stoclet-Bold.ttf") format("truetype"); /* Safari, Android, iOS */
+}
+h1,
+h2,
+h3 {
+  font-family: "Stoclet", sans-serif;
+}
+
 a {
   font-weight: 500;
   color: #646cff;
@@ -76,4 +86,45 @@ header {
   display: flex;
   grid-gap: 1em;
   z-index: 999;
+}
+
+#ui {
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding: 0.5em;
+  z-index: 999;
+  height: 100vh;
+  width: 100vw;
+  pointer-events: none;
+}
+
+.actions-bar {
+  box-sizing: border-box;
+  pointer-events: none;
+  padding: 2em 2em 3em;
+  display: flex;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  justify-content: center;
+  width: 100%;
+  grid-gap: 1em;
+}
+.actions-bar > * {
+  pointer-events: auto;
+}
+
+button {
+  color: #333549;
+  background: rgb(90, 124, 142);
+  background: linear-gradient(
+    137deg,
+    rgba(90, 124, 142, 1) 0%,
+    rgba(161, 180, 188, 1) 100%
+  );
+  border: 5px solid #aab9c3;
+}
+button:hover {
+  border-color: white;
 }

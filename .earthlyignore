@@ -1,0 +1,10 @@
+node_modules
+.DS_Store
+dist
+_dist
+dist-ssr
+*.local
+.log
+.env
+.github
+Earthfile
