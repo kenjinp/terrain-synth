@@ -98,7 +98,7 @@ const worker = () => new Worker()
 export default () => {
   const { scaleMax, showPerf } = useControls({
     scaleMax: {
-      value: 1000,
+      value: 500,
       min: 0,
       max: 2000,
     },

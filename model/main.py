@@ -1,29 +1,31 @@
-from gan import discriminator, generator, GAN, export, train
+from gan import model, export, train
 import torch
 import data
 import constants
 
 conf = constants.config()
-print(conf)
 
 dataloader = data.dataset(
-    conf["downsample_size"],
+    conf["image_size"],
     conf["number_of_datasamples"],
     conf["elevations_dataset_path"],
     conf["batch_size"],
 )
 
+# data.print_examples(dataloader)
 
 device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
-print(f"Using device {device}")
 
-myGAN = GAN(device=device)
+gan = model.GAN(device=device,
+                z_dim=conf["z_dim"],
+                channels_img=conf["channels_img"],
+                features_d=conf["features_critic"],
+                features_g=conf["features_gen"],
+                learning_rate=conf["learning_rate"])
 
-train(myGAN, dataloader, 10_000)
-
-# fake = myGAN.fake_generator_input()
-# out = myGAN.generator(fake)
-# export(myGAN.generator, fake,
-#        f"{myGAN.path}/{myGAN.generator.id}.onnx")
-# print(out)
-# print(out.shape)
+train(gan, dataloader,
+      conf["num_epochs"],
+      conf["z_dim"],
+      conf["lambda_gp"],
+      save_interval=conf["save_interval"],
+      critic_iterations=conf["critic_iterations"])

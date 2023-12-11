@@ -9,7 +9,7 @@ import {
   remap,
 } from "@hello-worlds/planets"
 import { Color, Vector3 } from "three"
-import { interpolateColor } from "./Basic.color"
+import { interpolateColor } from "./Basic.colors"
 
 export type ThreadParams = {
   seed: string
@@ -83,16 +83,19 @@ const colorSpline = new LinearSpline<THREE.Color>(colorLerp)
 colorSpline.addPoint(0.0, new Color(0xd9c9bb))
 colorSpline.addPoint(0.01, new Color(0xe1bd9c))
 colorSpline.addPoint(0.02, new Color(0x494f2b))
-colorSpline.addPoint(0.06, new Color(0x6f6844))
-colorSpline.addPoint(0.5, new Color(0x927e59))
+colorSpline.addPoint(0.1, new Color(0x6f6844))
+colorSpline.addPoint(0.3, new Color(0x927e59))
+colorSpline.addPoint(0.5, new Color(0x816653))
+colorSpline.addPoint(0.55, new Color(0x70666d))
+colorSpline.addPoint(0.6, new Color(0xffffff))
 
 const colorGenerator: ChunkGenerator3Initializer<
   ThreadParams,
   Color | ColorArrayWithAlpha
-> = props => {
+> = ({ data: { scaleMax } }) => {
   const color = new Color(0xffffff)
   return ({ height }) => {
-    const remappedHeight = remap(height, 0, 800, 0, 1)
+    const remappedHeight = remap(height, 0, scaleMax, 0, 1)
     return colorSpline.get(remappedHeight)
   }
 }

@@ -34,8 +34,9 @@ const Header = () => {
   const [currentPath, setCurrentPath] = useState(location.pathname)
 
   useEffect(() => {
-    const name = routes.find(route => route.path === currentPath)?.name
-    document.title = `Hello Worlds Examples${name ? " - " + name : ""}`
+    // const name = routes.find(route => route.path === currentPath)?.name
+    // here change TITLE stuff
+    // document.title = `Hello Worlds Examples${name ? " - " + name : ""}`
     navigate(currentPath)
   }, [currentPath])
 

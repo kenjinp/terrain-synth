@@ -3,8 +3,8 @@ import generator from "../assets/generator.onnx?url"
 import { createImageDataFromArray } from "./image"
 import { generateStandardNormalArray } from "./math"
 
-const modelImageOutputSize = 64
-const batchSize = 64
+const modelImageOutputSize = 128
+const batchSize = 1
 const latentDim = 100
 const dims = [batchSize, latentDim, 1, 1]
 const size = dims.reduce((a, b) => a * b)
