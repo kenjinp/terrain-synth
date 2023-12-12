@@ -4,7 +4,7 @@ import { useThree } from "@react-three/fiber"
 import { Perf } from "r3f-perf"
 import { Color, Euler, Vector3 } from "three"
 
-import { Box, ContactShadows, Grid, Html, useTexture } from "@react-three/drei"
+import { Box, ContactShadows, Grid, Html } from "@react-three/drei"
 import { useControls } from "leva"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { match } from "ts-pattern"
@@ -12,91 +12,15 @@ import { CloudScroller } from "../../components/clouds/CloudScroller"
 import { Compass } from "../../components/compass/Compass"
 import { Ocean } from "../../components/ocean/Ocean"
 import { Post } from "../../components/post/Post"
-import { generateBlendedMaterial } from "../../materials/Ground"
 import { MODEL_STATE } from "../../model/Model.utils"
 import { useModel } from "../../model/use-model"
 import { UI } from "../../tunnel"
+import { BIOMES } from "./Basic.biomes"
 import Worker from "./Basic.worker?worker"
-
-async function loadGeneratedImage(
-  size: number,
-  img: HTMLImageElement,
-  // url: string,
-  upsample = false,
-): Promise<ImageData> {
-  // const res = await fetch(url)
-  // const blob = await res.blob()
-  const image = await createImageBitmap(img)
-  const canvas = document.createElement("canvas")
-  const context = canvas.getContext("2d")!
-  if (upsample) {
-    canvas.width = size
-    canvas.height = size
-    // context.save()
-    // context.scale(1, -1)
-    context.scale(-1, 1)
-    // const blurRadius = 10
-
-    // Apply blur filter
-    // context.filter = `blur(${blurRadius}px)`
-    // context.drawImage(image, 0, 0, image.width, -image.height)
-    // context.drawImage(image, 0, 0)
-    context.drawImage(
-      image,
-      // 5,
-      // 5,
-      // image.width - 10,
-      // image.height - 10,
-      0,
-      0,
-      canvas.width * -1,
-      canvas.width,
-    )
-    // context.restore()
-
-    // Reset filter
-    // context.imageSmoothingQuality = "high"
-    context.imageSmoothingEnabled = true
-    // context.filter = "none"
-    // document.body.appendChild(canvas)
-
-    return context.getImageData(0, 0, canvas.width, canvas.width)
-  } else {
-    canvas.width = image.width
-    canvas.height = image.height
-    // context.save()
-    // context.scale(1, -1)
-    // context.scale(-1, 1)
-    // const blurRadius = 0
-
-    // Apply blur filter
-    // context.filter = `blur(${blurRadius}px)`
-    // context.drawImage(image, 0, 0, image.width, -image.height)
-    context.drawImage(
-      image,
-      // 2,
-      // 2,
-      // image.width - 2,
-      // image.height - 2,
-      0,
-      0,
-      canvas.width,
-      canvas.width,
-    )
-    // context.drawImage(image, 0, 0, size * -1, size)
-    // context.restore()
-
-    // Reset filter
-    context.filter = "none"
-    // document.body.appendChild(canvas)
-
-    return context.getImageData(1, 1, image.width, image.height)
-  }
-}
 
 const worker = () => new Worker()
 export default () => {
-  const { scaleMax, showPerf } = useControls({
+  const { scaleMax, showPerf, useNoise, useInterpolation } = useControls({
     scaleMax: {
       value: 500,
       min: 0,
@@ -105,17 +29,19 @@ export default () => {
     // showHeightmap: true,
     model: false,
     showPerf: false,
+    useNoise: true,
+    useInterpolation: true,
   })
   const camera = useThree(state => state.camera)
   const flatWorld = useRef<HelloFlatWorld<any>>(null)
   const { state, run, imageData } = useModel()
 
-  const [uv, sand, grass, rocks] = useTexture([
-    "uv.png",
-    "beach.png",
-    "grass.png",
-    "rocks.png",
-  ])
+  // const [uv, sand, grass, rocks] = useTexture([
+  //   "uv.png",
+  //   "beach.png",
+  //   "grass.png",
+  //   "rocks.png",
+  // ])
   const [terrainData, setTerrainData] = useState<ImageData | null>(null)
   const size = 10_000
 
@@ -149,27 +75,30 @@ export default () => {
 
   const data = useMemo(() => {
     return {
+      biome: BIOMES.SIM_CITY,
       terrainData,
       scaleMax,
+      useNoise,
+      useInterpolation,
       seed: "Basic Example",
     }
-  }, [terrainData, scaleMax])
+  }, [terrainData, scaleMax, useNoise, useInterpolation])
 
-  const mat = useMemo(() => {
-    sand.repeat.set(1000, 1000)
-    rocks.repeat.set(1000, 1000)
-    grass.repeat.set(1000, 1000)
-    return generateBlendedMaterial([
-      {
-        texture: sand,
-      },
-      { texture: grass, levels: [10, 12, 20, 30] },
-      {
-        texture: rocks,
-        glsl: "slope > 0.7853981633974483 ? 0.2 : 1.0 - smoothstep(0.47123889803846897, 0.7853981633974483, slope) + 0.2",
-      },
-    ])
-  }, [sand, grass, rocks])
+  // const mat = useMemo(() => {
+  //   sand.repeat.set(1000, 1000)
+  //   rocks.repeat.set(1000, 1000)
+  //   grass.repeat.set(1000, 1000)
+  //   return generateBlendedMaterial([
+  //     {
+  //       texture: sand,
+  //     },
+  //     { texture: grass, levels: [10, 12, 20, 30] },
+  //     {
+  //       texture: rocks,
+  //       glsl: "slope > 0.7853981633974483 ? 0.2 : 1.0 - smoothstep(0.47123889803846897, 0.7853981633974483, slope) + 0.2",
+  //     },
+  //   ])
+  // }, [sand, grass, rocks])
 
   const depth = scaleMax
   camera.position.set(-778.8166673411616, 5553.223843712609, 9614.949713806403)

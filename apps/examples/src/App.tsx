@@ -61,7 +61,7 @@ const Header = () => {
 
 export default () => (
   <BrowserRouter>
-    <Leva hidden />
+    <Leva hidden/>
     <Header />
     <Routes>
       {routes.map(route => (

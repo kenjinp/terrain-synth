@@ -14,7 +14,7 @@ export const Post: React.FC = () => {
         bokehScale={2}
         height={300}
       /> */}
-      <Bloom luminanceThreshold={0.5} luminanceSmoothing={0.9} height={512} />
+      <Bloom luminanceThreshold={0.7} luminanceSmoothing={0.9} height={512} />
       <Noise opacity={0.02} />
       {/* <Vignette eskil={false} offset={0.1} darkness={1.1} /> */}
       {/* <ToneMapping
