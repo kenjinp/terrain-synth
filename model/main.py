@@ -1,31 +1,41 @@
-from gan import model, export, train
+from progan import model, export, train, constants, loader
 import torch
-import data
-import constants
+import warnings
 
 conf = constants.config()
 
-dataloader = data.dataset(
-    conf["image_size"],
-    conf["number_of_datasamples"],
-    conf["elevations_dataset_path"],
-    conf["batch_size"],
-)
-
-# data.print_examples(dataloader)
-
 device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
 
-gan = model.GAN(device=device,
-                z_dim=conf["z_dim"],
-                channels_img=conf["channels_img"],
-                features_d=conf["features_critic"],
-                features_g=conf["features_gen"],
-                learning_rate=conf["learning_rate"])
+path = conf["elevations_dataset_path"]
+image_size = conf["image_size"]
+channels_img = conf["channels_img"]
+number_of_datasamples = conf["number_of_datasamples"]
+num_workers = conf["num_workers"]
+batch_sizes = conf["batch_sizes"]
+start_train_at_img_size = conf["start_train_at_img_size"]
+progressive_epochs = conf["progressive_epochs_by_image_size"]
+save_model = conf["save_model"]
+lambda_gp = conf["lambda_gp"]
 
-train(gan, dataloader,
-      conf["num_epochs"],
-      conf["z_dim"],
-      conf["lambda_gp"],
-      save_interval=conf["save_interval"],
-      critic_iterations=conf["critic_iterations"])
+warnings.filterwarnings("ignore")
+
+
+def main():
+    gan = model.ProGAN(
+        z_dim=conf["z_dim"],
+        in_channels=conf["in_channels"],
+        img_channels=conf["channels_img"],
+        learning_rate=conf["learning_rate"],
+        start_train_at_img_size=256,
+        device=device
+    )
+    get_loader = loader.get_loader_maker(
+        path, image_size, channels_img, batch_sizes, number_of_datasamples, num_workers
+    )
+
+    train.train(gan, get_loader, batch_sizes, start_train_at_img_size,
+                progressive_epochs, save_model, lambda_gp)
+
+
+if __name__ == "__main__":
+    main()
