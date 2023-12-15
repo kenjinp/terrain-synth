@@ -11,10 +11,11 @@ from scipy.stats import truncnorm
 
 
 def plot_to_tensorboard(
-    writer, loss_critic, loss_gen, real, fake, tensorboard_step
+    writer, loss_critic, loss_gen, real, fake, tensorboard_step, image_size
 ):
     writer.add_scalar("Loss Critic", loss_critic, global_step=tensorboard_step)
     writer.add_scalar("Loss GEN", loss_gen, global_step=tensorboard_step)
+    writer.add_scalar("Image Size", image_size, global_step=tensorboard_step)
 
     with torch.no_grad():
         # take out (up to) 8 examples to plot
@@ -48,7 +49,6 @@ def gradient_penalty(critic, real, fake, alpha, train_step, device):
 
 
 def save_checkpoint(model, optimizer, filename="my_checkpoint.pth.tar"):
-    print("=> Saving checkpoint")
     checkpoint = {
         "state_dict": model.state_dict(),
         "optimizer": optimizer.state_dict(),
@@ -57,7 +57,6 @@ def save_checkpoint(model, optimizer, filename="my_checkpoint.pth.tar"):
 
 
 def load_checkpoint(checkpoint_file, model, optimizer, lr, device):
-    print("=> Loading checkpoint")
     checkpoint = torch.load(checkpoint_file, map_location=device)
     model.load_state_dict(checkpoint["state_dict"])
     optimizer.load_state_dict(checkpoint["optimizer"])

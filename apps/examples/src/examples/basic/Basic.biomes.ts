@@ -4,6 +4,7 @@ import { Color } from "three"
 export enum BIOMES {
   SIM_CITY,
   TROPICAL,
+  OCEAN,
 }
 
 export const biomeNames = {
@@ -16,15 +17,21 @@ interface ColorElevation {
   elevation: number
 }
 
+const oceanColors: ColorElevation[] = [
+  { color: "#80FFE0", elevation: 0.0 },
+  { color: "#95EBCE", elevation: 0.1 },
+  { color: "#4C7788", elevation: 0.5 },
+]
+
 const simCityColors: ColorElevation[] = [
   { color: "#d9c9bb", elevation: 0.0 },
   { color: "#e1bd9c", elevation: 0.02 },
   { color: "#494f2b", elevation: 0.025 },
   { color: "#6f6844", elevation: 0.1 },
   { color: "#927e59", elevation: 0.3 },
-  { color: "#816653", elevation: 0.5 },
-  { color: "#70666d", elevation: 0.55 },
-  { color: "#ffffff", elevation: 0.6 },
+  { color: "#816653", elevation: 0.6 },
+  { color: "#70666d", elevation: 0.65 },
+  { color: "#ffffff", elevation: 0.7 },
 ]
 
 const tropicalColors: ColorElevation[] = [
@@ -60,3 +67,5 @@ export const biomeColorSplineMap = {
   [BIOMES.TROPICAL]: createColorSplineFromColorElevation(tropicalColors),
   [BIOMES.SIM_CITY]: createColorSplineFromColorElevation(simCityColors),
 }
+
+export const oceanSpline = createColorSplineFromColorElevation(oceanColors)

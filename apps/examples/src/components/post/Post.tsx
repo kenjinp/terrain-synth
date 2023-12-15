@@ -6,7 +6,8 @@ export const Post: React.FC = () => {
   const camera = useThree(state => state.camera)
   // workaround for https://github.com/pmndrs/drei/issues/803
   gl.autoClear = true
-  return (
+  const useEffectComposer = true
+  return useEffectComposer ? (
     <EffectComposer>
       {/* <DepthOfField
         focusDistance={0}
@@ -27,5 +28,5 @@ export const Post: React.FC = () => {
         adaptationRate={1.0} // luminance adaptation rate
       /> */}
     </EffectComposer>
-  )
+  ) : null
 }

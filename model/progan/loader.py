@@ -11,8 +11,12 @@ def get_loader_maker(elevations_dataset_path, image_size, channels_img, batch_si
             v2.ToImage(),
             v2.ToDtype(torch.float32, scale=True),
             v2.Grayscale(num_output_channels=1),
+            # This is to prevent focusing too much on the edges?
             v2.RandomResizedCrop(
                 size=(image_size, image_size), antialias=True),
+            # prevent overfitting by flipping things around
+            v2.RandomHorizontalFlip(),
+            v2.RandomVerticalFlip(),
             v2.Normalize([0.5 for _ in range(channels_img)],
                          [0.5 for _ in range(channels_img)]),
         ])

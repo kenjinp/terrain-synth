@@ -1,6 +1,6 @@
 import { Canvas as R3fCanvas } from "@react-three/fiber"
 import { Suspense } from "react"
-
+import { PCFSoftShadowMap } from "three"
 export const Canvas: React.FC<
   React.PropsWithChildren<{ style?: React.CSSProperties }>
 > = ({ children, style }) => {
@@ -8,15 +8,20 @@ export const Canvas: React.FC<
     <R3fCanvas
       gl={{
         logarithmicDepthBuffer: true,
-        antialias: false,
-        stencil: false,
+        antialias: true,
+        stencil: true,
         depth: true,
       }}
       camera={{
         near: 0.01,
         far: Number.MAX_SAFE_INTEGER,
       }}
-      shadows
+      shadows={{ type: PCFSoftShadowMap }}
+      shadow-camera-far={1000000}
+      shadow-camera-left={-10000}
+      shadow-camera-right={10000}
+      shadow-camera-top={10000}
+      shadow-camera-bottom={-10000}
       style={
         style || {
           position: "absolute",

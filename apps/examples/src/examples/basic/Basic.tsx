@@ -2,7 +2,7 @@ import { FlatWorld as HelloFlatWorld } from "@hello-worlds/planets"
 import { FlatWorld } from "@hello-worlds/react"
 import { useThree } from "@react-three/fiber"
 import { Perf } from "r3f-perf"
-import { Color, Euler, Vector3 } from "three"
+import { Color, Euler, MeshPhysicalMaterial, Vector3 } from "three"
 
 import { Box, ContactShadows, Grid, Html } from "@react-three/drei"
 import { useControls } from "leva"
@@ -16,6 +16,10 @@ import { MODEL_STATE } from "../../model/Model.utils"
 import { useModel } from "../../model/use-model"
 import { UI } from "../../tunnel"
 import { BIOMES } from "./Basic.biomes"
+import {
+  createImageElementFromImageData,
+  processImageData,
+} from "./Basic.image"
 import Worker from "./Basic.worker?worker"
 
 const worker = () => new Worker()
@@ -33,6 +37,7 @@ export default () => {
     useInterpolation: true,
   })
   const camera = useThree(state => state.camera)
+  const scene = useThree(state => state.scene)
   const flatWorld = useRef<HelloFlatWorld<any>>(null)
   const { state, run, imageData } = useModel()
 
@@ -43,9 +48,14 @@ export default () => {
   //   "rocks.png",
   // ])
   const [terrainData, setTerrainData] = useState<ImageData | null>(null)
+  const [oceanData, setOceanData] = useState<ImageData | null>(null)
   const size = 10_000
 
   useEffect(() => {
+    if (!imageData) return
+    const oceanData = processImageData(imageData)
+    setOceanData(oceanData)
+    createImageElementFromImageData(oceanData)
     setTerrainData(imageData)
   }, [imageData])
 
@@ -66,7 +76,7 @@ export default () => {
   useEffect(() => {
     const listener = (event: KeyboardEvent) => {
       if (event.key === "c") {
-        console.log(camera.position)
+        console.log(camera.position.toArray())
       }
     }
     document.addEventListener("keydown", listener)
@@ -77,12 +87,13 @@ export default () => {
     return {
       biome: BIOMES.SIM_CITY,
       terrainData,
+      oceanData,
       scaleMax,
       useNoise,
       useInterpolation,
       seed: "Basic Example",
     }
-  }, [terrainData, scaleMax, useNoise, useInterpolation])
+  }, [terrainData, oceanData, scaleMax, useNoise, useInterpolation])
 
   // const mat = useMemo(() => {
   //   sand.repeat.set(1000, 1000)
@@ -99,6 +110,16 @@ export default () => {
   //     },
   //   ])
   // }, [sand, grass, rocks])
+
+  const mat = useMemo(() => {
+    const csm = scene.userData["csm"]
+    const material = new MeshPhysicalMaterial({ vertexColors: true })
+    // if (csm) {
+    //   csm.setupMaterial(material)
+    //   console.log("set up material with csm")
+    // }
+    return material
+  }, [scene])
 
   const depth = scaleMax
   camera.position.set(-778.8166673411616, 5553.223843712609, 9614.949713806403)
@@ -136,13 +157,14 @@ export default () => {
         cellThickness={0.5}
         cellColor={new Color(0x55597b)}
         sectionSize={5_000}
-        sectionThickness={1.2}
+        sectionThickness={1}
         sectionColor={new Color(0x55597b)}
         followCamera={false}
         infiniteGrid
         fadeDistance={1_000_000}
         fadeStrength={40}
       />
+
       <Html
         position={[0, -depth + 100, size / 2 + 500]}
         transform
@@ -158,10 +180,10 @@ export default () => {
         </div>
       </Html>
       <Ocean
-        position={[0, -depth / 2 + 10, 0]}
+        position={[0, -depth / 2 + 5, 0]}
         size={[size - 0.1, depth, size - 0.1]}
       />
-      <group>
+      <group visible={false}>
         <Box scale={[size + 100, 1, size + 100]} position-y={0}>
           <meshBasicMaterial color="pink" opacity={0} transparent />
         </Box>
@@ -179,26 +201,27 @@ export default () => {
         rotation={new Euler().setFromVector3(new Vector3(-Math.PI / 2, 0, 0))}
         receiveShadow
       >
+        {/* <ParticleField /> */}
+
         {terrainData && (
           <FlatWorld
             ref={flatWorld}
             size={size}
-            minCellSize={64}
-            minCellResolution={64}
+            minCellSize={64 * 4}
+            minCellResolution={128}
             lodOrigin={camera.position}
             worker={worker}
             data={data}
             skirtDepth={depth}
-            // lodDistanceComparisonValue={1.5}
           >
-            <meshPhysicalMaterial
+            {/* <meshPhysicalMaterial
               // baseMaterial={MeshPhysicalMaterial}
               vertexColors
 
               // map={uv}
               // map={showHeightmap ? newTexture : null}
-            />
-            {/* <primitive object={mat} /> */}
+            /> */}
+            <primitive object={mat} />
           </FlatWorld>
         )}
       </group>

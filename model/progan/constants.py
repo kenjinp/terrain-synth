@@ -40,4 +40,5 @@ def config():
         'progressive_epochs_by_image_size': int(PROGRESSIVE_EPOCHS_BY_IMAGE_SIZE),
         'in_channels': int(IN_CHANNELS),
         'start_train_at_img_size': int(START_TRAIN_AT_IMG_SIZE),
+        'critic_iterations': int(CRITIC_ITERATIONS),
     }

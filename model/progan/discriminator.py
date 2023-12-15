@@ -87,10 +87,24 @@ class Discriminator(Network):
         # from previous/smaller size which in our case correlates to +1 in the indexing
         downscaled = self.leaky(
             self.rgb_layers[cur_step + 1](self.avg_pool(x)))
+
+        # print(f"Downscaled: {downscaled.shape}")
+
         out = self.avg_pool(self.prog_blocks[cur_step](out))
 
+        # print(f"Out: {out.shape}")
         # the fade_in is done first between the downscaled and the input
         # this is opposite from the generator
+        # print(cur_step, steps, len(self.prog_blocks))
+        # 0 does not exist
+        # 8 - 7/1/8 - 256 DOES match size 256
+        # 16 - 6/2/8 - 256 DOES matxh size 256
+        # 32 = 5/3/8 - 32  size 256 must match size 128
+        # 128 - 4/4/8 - 64 size 256 must match size 64
+        # 3/5/8 - 128 size 128 must match 32
+        # 2/6/8 - 256 size 64 must match 16
+
+        # out is 256, downscaled is 128
         out = self.fade_in(alpha, downscaled, out)
 
         for step in range(cur_step + 1, len(self.prog_blocks)):

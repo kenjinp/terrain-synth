@@ -59,9 +59,10 @@ const Header = () => {
   )
 }
 
+const hidden = true
 export default () => (
   <BrowserRouter>
-    <Leva hidden/>
+    <Leva hidden={hidden} />
     <Header />
     <Routes>
       {routes.map(route => (

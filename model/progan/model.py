@@ -21,7 +21,6 @@ class ProGAN:
                  in_channels,
                  img_channels,
                  learning_rate,
-                 start_train_at_img_size,
                  device="cpu"
                  ):
         self.z_dim = z_dim
@@ -50,7 +49,9 @@ class ProGAN:
         self.scalar_critic = torch.cuda.amp.GradScaler()
         self.scalar_generator = torch.cuda.amp.GradScaler()
 
-        # timestamp = datetime.datetime.now().strftime("%m-%d-%y_%H:%M:%S")
+        timestamp = datetime.datetime.now().strftime("%m-%d-%y_%H:%M:%S")
+        self.timestamp = timestamp
+
         self.id = f"terrain-ProGAN"
 
         def make_path(path):
@@ -61,7 +62,7 @@ class ProGAN:
         # Make a folder to store all the goodies
         self.path = make_path(Path(os.getcwd()).resolve() / f".{self.id}")
         self.image_path = make_path(self.path / "images")
-        self.writer_path = self.path / "logs"
+        self.writer_path = self.path / f"logs/{timestamp}"
         self.checkpoint_path = self.path / "checkpoint"
         make_path(self.checkpoint_path)
 
@@ -73,6 +74,7 @@ class ProGAN:
         else:
             self.generator.initialize_weights()
             self.discriminator.initialize_weights()
+            self.tensorboard_step = 0
 
         self.generator.train()
         self.discriminator.train()
@@ -85,12 +87,21 @@ class ProGAN:
         load_checkpoint(self.checkpoint_path / "disc.pt",
                         self.discriminator, self.optimizer_D, self.learning_rate, self.device)
 
+        if os.path.exists(self.checkpoint_path / "misc.pt"):
+            misc = torch.load(self.checkpoint_path / "misc.pt")
+            self.tensorboard_step = misc["tensorboard_step"]
+        else:
+            self.tensorboard_step = 0
+
     def save_checkpoint(self):
         print(f"=> Saving checkpoint to {self.checkpoint_path}")
         save_checkpoint(self.generator, self.optimizer_G,
                         self.checkpoint_path / "gen.pt")
         save_checkpoint(self.discriminator, self.optimizer_D,
                         self.checkpoint_path / "disc.pt")
+        torch.save({
+            "tensorboard_step": self.tensorboard_step,
+        }, self.checkpoint_path / "misc.pt")
 
     def save_image(self, fixed_fakes, label):
         img = fixed_fakes[0]

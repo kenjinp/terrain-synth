@@ -1,21 +1,37 @@
-import { Noise } from "@hello-worlds/planets"
+import { NOISE_TYPES, Noise } from "@hello-worlds/planets"
 import { MathUtils } from "three"
+
+const biasNoise = new Noise({
+  seed: "banana",
+  noiseType: NOISE_TYPES.RIGID,
+  height: 2,
+  scale: 10,
+})
+
+const warpNoise = new Noise({
+  seed: "banana",
+  noiseType: NOISE_TYPES.BILLOWING,
+  height: 4,
+  scale: 1000,
+})
 
 export function interpolateColor(
   x: number,
   y: number,
   width: number,
   pixelData: Uint8Array,
-  noise: Noise,
+  // noise: Noise,
   useNoise = true,
 ) {
   // lets push the noise from the origin, which might otherwise produce artifacts
   const noiseOffset = 1000
-  let n = noise.get(x + noiseOffset, 0, y + noiseOffset)
-  let e = noise.get(x + noiseOffset + n, 0, y + n + noiseOffset)
+  let n = biasNoise.get(x + noiseOffset, 0, y + noiseOffset)
+  let e = warpNoise.get(x + noiseOffset + n, 0, y + n + noiseOffset)
+  let f = biasNoise.get(x + noiseOffset + e, 0, y + e + noiseOffset)
+  let g = warpNoise.get(x + noiseOffset + f, 0, y + f + noiseOffset)
   if (useNoise) {
-    x = x + n + e
-    y = y + n + e
+    x = x + n + e + f + g
+    y = y + n + e + f + g
   }
 
   // Get the integer and fractional parts of the coordinates

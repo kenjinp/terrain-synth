@@ -16,6 +16,7 @@ start_train_at_img_size = conf["start_train_at_img_size"]
 progressive_epochs = conf["progressive_epochs_by_image_size"]
 save_model = conf["save_model"]
 lambda_gp = conf["lambda_gp"]
+critic_iterations = conf["critic_iterations"]
 
 warnings.filterwarnings("ignore")
 
@@ -26,7 +27,6 @@ def main():
         in_channels=conf["in_channels"],
         img_channels=conf["channels_img"],
         learning_rate=conf["learning_rate"],
-        start_train_at_img_size=256,
         device=device
     )
     get_loader = loader.get_loader_maker(
@@ -34,7 +34,7 @@ def main():
     )
 
     train.train(gan, get_loader, batch_sizes, start_train_at_img_size,
-                progressive_epochs, save_model, lambda_gp)
+                progressive_epochs, save_model, lambda_gp, critic_iterations)
 
 
 if __name__ == "__main__":

@@ -11,9 +11,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@react-spring/web": "^9.7.3",
+    "glslify": "^7.1.1",
     "onnxruntime-web": "^1.16.3",
     "poisson-disk-sampling": "^2.3.1",
     "react-router-dom": "^6.18.0",
+    "three-csm": "^4.2.1",
     "ts-pattern": "^5.0.6",
     "tunnel-rat": "^0.1.2"
   },

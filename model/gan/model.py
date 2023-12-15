@@ -44,6 +44,7 @@ class GAN:
             self.discriminator.parameters(), lr=learning_rate, betas=(0.0, 0.9))
 
         timestamp = datetime.datetime.now().strftime("%m-%d-%y_%H:%M:%S")
+        self.timestamp = timestamp
         self.id = f"terrain-gan"
 
         def make_path(path):
