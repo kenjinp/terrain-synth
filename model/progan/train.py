@@ -140,15 +140,11 @@ def train(gan, get_loader, batch_sizes, start_train_at_img_size, progressive_epo
                 critic_iterations
             )
 
-            if epoch % 10 == 0:
-                with torch.no_grad():
-                    fixed_fakes = gen(fixed_noise, alpha, step)
-                gan.save_image(
-                    fixed_fakes, f"size-{image_size}-epoch-{epoch+1}")
-
             if save_model:
-                gan.save_checkpoint()
-                # I',m not sure about the step stuff...
-                gan.export(step)
+                with torch.no_grad():
+                    gan.save_checkpoint()
+                    # I',m not sure about the step stuff...
+                    gan.export(step)
+                    gan.generate_example_plot(step, f"epoch-{epoch}")
 
         step += 1

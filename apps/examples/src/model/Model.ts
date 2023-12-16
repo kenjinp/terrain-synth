@@ -1,6 +1,6 @@
 import * as onnxruntimeWeb from "onnxruntime-web"
 import "../assets/ort-wasm-simd-threaded.wasm?url"
-import { MODEL_STATE, loadModel, runModel } from "./Model.utils"
+import { MODEL_STATE, loadModel, runModel } from "./Model.gan"
 import ModelWorker from "./Model.worker?worker"
 
 export class ThreadedTerrainSynthModel {

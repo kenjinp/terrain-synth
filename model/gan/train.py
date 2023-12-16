@@ -67,8 +67,9 @@ def train(gan, dataloader, num_epochs, lambda_gp, save_model, critic_iterations)
                 )
                 step += 1
 
-        if epoch % 10 == 0 & save_model:
+        if epoch % 1 == 0 & save_model:
             with torch.no_grad():
                 gan.save_checkpoint()
                 gan.export()
-                gan.generate_example_plot(f"epoch-{epoch}")
+                if epoch % 4 == 0 & save_model:
+                    gan.generate_example_plot(f"epoch-{epoch}")

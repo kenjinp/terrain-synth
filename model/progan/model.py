@@ -12,7 +12,7 @@ from math import log2
 
 from .generator import Generator
 from .discriminator import Discriminator
-from .utils import gradient_penalty, load_checkpoint, save_checkpoint
+from .utils import load_checkpoint, save_checkpoint
 
 
 class ProGAN:
@@ -66,6 +66,7 @@ class ProGAN:
         self.checkpoint_path = self.path / "checkpoint"
         make_path(self.checkpoint_path)
         make_path(self.path / "examples")
+        self.examples_path = make_path(self.path / "examples")
 
         self.writer = SummaryWriter(log_dir=self.writer_path)
 
@@ -111,20 +112,37 @@ class ProGAN:
         print(f"Saving image to {path}")
         save_image(img, path, nrow=5, normalize=True)
 
-    def generate_image(self, batch_size, image_size):
+    def fake_generator_input(self, batch_size):
         noise = torch.randn(batch_size, self.z_dim, 1, 1).to(self.device)
-        step = int(log2(image_size / 4))
+        return noise
+
+    def generate_image(self, step, batch_size):
+        noise = self.fake_generator_input(batch_size)
         with torch.no_grad():
-            fake = self.generator(noise, 1.0, step)
-            img = fake[0]
-            img = img.squeeze()
-            img_npy = img.detach().cpu().numpy()
-            return img_npy
+            fake = self.generator(noise, 1, step)
+            return fake
 
     def show_image(self, image_size):
         img_npy = self.generate_image(1, image_size)
         plt.imshow(img_npy, cmap="gray")
         plt.show()
+
+    def generate_example_plot(self, step, name, show=False):
+        columns = 4
+        rows = 5
+        fig = plt.figure(figsize=(9, 13))
+        images = self.generate_image(step, columns * rows)
+        ax = []
+        for i, img in enumerate(images):
+            img = img.squeeze()
+            ax.append(fig.add_subplot(rows, columns, i+1))
+            plt.imshow(img.cpu(), cmap="gray")
+
+        if (show):
+            plt.show()
+        else:
+            plt.savefig(self.examples_path /
+                        f"{name}.png", bbox_inches='tight')
 
     def export(self, step):
         dummy_input_1 = torch.randn(8, self.z_dim, 1, 1).to(self.device)
@@ -133,8 +151,7 @@ class ProGAN:
         # self.generator(dummy_input_1, 1.0, step)
 
         # This is how to export it with multiple inputs
-        alpha = torch.tensor(1.0).to(self.device)
-        step = torch.tensor(step).to(self.device)
+        alpha = 1
         args = dummy_input_1, alpha, step
         print(args)
         with torch.inference_mode(), torch.cuda.amp.autocast():

@@ -12,7 +12,7 @@ import { CloudScroller } from "../../components/clouds/CloudScroller"
 import { Compass } from "../../components/compass/Compass"
 import { Ocean } from "../../components/ocean/Ocean"
 import { Post } from "../../components/post/Post"
-import { MODEL_STATE } from "../../model/Model.utils"
+import { MODEL_STATE } from "../../model/Model.gan"
 import { useModel } from "../../model/use-model"
 import { UI } from "../../tunnel"
 import { BIOMES } from "./Basic.biomes"
@@ -57,6 +57,7 @@ export default () => {
     setOceanData(oceanData)
     createImageElementFromImageData(oceanData)
     setTerrainData(imageData)
+    createImageElementFromImageData(imageData)
   }, [imageData])
 
   useEffect(() => {

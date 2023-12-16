@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 
 from .network import Network
-from ..common.blocks import WSConv2d, ConvBlock
+from common.blocks import WSConv2d, ConvBlock
 
 factors = [1, 1, 1, 1,  1/2, 1/4, 1/8, 1/16, 1/32]
 

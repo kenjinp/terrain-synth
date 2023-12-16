@@ -55,8 +55,8 @@ class Generator(Network):
                 bias=False,
             ),
             nn.BatchNorm2d(out_channels),
-            nn.LeakyReLU(0.2),
-            PixelNorm(),
+            nn.ReLU(),
+            # PixelNorm(),
 
         )
 

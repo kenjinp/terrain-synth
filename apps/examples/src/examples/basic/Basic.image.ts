@@ -22,8 +22,8 @@ export function createImageElementFromImageData(
   // Set the image source to the canvas data URL
   imageElement.src = canvas.toDataURL()
   imageElement.style.zIndex = "9999"
-  imageElement.id = "ocean heights"
-  // document.body.appendChild(imageElement)
+  // imageElement.id = "ocean heights"
+  document.body.appendChild(imageElement)
 
   return imageElement
 }
