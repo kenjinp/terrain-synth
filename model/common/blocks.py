@@ -6,7 +6,6 @@ from torch import nn
 
 # Weighted, Scaled, Conv2D (equalized learning rate for conv layer)
 
-
 class WSConv2d(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size=3, stride=1, padding=1, gain=2):
         super().__init__()

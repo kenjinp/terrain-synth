@@ -1,11 +1,9 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import datetime
-from torchsummary import summary
 
 from .network import Network
-from .blocks import WSConv2d, PixelNorm, ConvBlock
+from ..common.blocks import WSConv2d, PixelNorm, ConvBlock
 
 factors = [1, 1, 1, 1,  1/2, 1/4, 1/8, 1/16, 1/32]
 

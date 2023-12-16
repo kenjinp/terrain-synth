@@ -18,6 +18,8 @@ LAMBDA_GP = os.getenv('LAMBDA_GP')
 SAVE_MODEL = os.getenv('SAVE_INTERVAL')
 NUM_WORKERS = os.getenv('NUM_WORKERS')
 SAVE_MODEL = os.getenv('SAVE_MODEL')
+BATCH_SIZE = os.getenv('BATCH_SIZE')
+NUM_EPOCHS = os.getenv('NUM_EPOCHS')
 PROGRESSIVE_EPOCHS_BY_IMAGE_SIZE = os.getenv(
     'PROGRESSIVE_EPOCHS_BY_IMAGE_SIZE')
 START_TRAIN_AT_IMG_SIZE = os.getenv('START_TRAIN_AT_IMG_SIZE')
@@ -41,4 +43,6 @@ def config():
         'in_channels': int(IN_CHANNELS),
         'start_train_at_img_size': int(START_TRAIN_AT_IMG_SIZE),
         'critic_iterations': int(CRITIC_ITERATIONS),
+        'batch_size': int(BATCH_SIZE),
+        'num_epocks': int(NUM_EPOCHS),
     }

@@ -1,12 +1,13 @@
 import * as onnxruntimeWeb from "onnxruntime-web"
 import generator from "../../../../.terrain-ProGAN/generator.onnx?url"
-import "../assets/ort-wasm-simd-threaded.wasm?url"
 import { createImageDataFromArray } from "./image"
 import { generateStandardNormalArray } from "./math"
 
+// This is for the WGAN model
+
 const modelImageOutputSize = 128
-const batchSize = 8
-const latentDim = 256
+const batchSize = 1
+const latentDim = 100
 const dims = [batchSize, latentDim, 1, 1]
 const size = dims.reduce((a, b) => a * b)
 const array = new Array(size).fill(0)
@@ -32,11 +33,9 @@ function generateFeeds(model: onnxruntimeWeb.InferenceSession) {
   const randomArray = generateStandardNormalArray(array, size)
   const buffer = new Float32Array(randomArray)
   const inputTensor = new onnxruntimeWeb.Tensor("float32", buffer, dims)
-  console.log({ model })
+
   const feeds: Record<string, onnxruntimeWeb.Tensor> = {}
   feeds[model.inputNames[0]] = inputTensor
-  // feeds[model.inputNames[1]] = new onnxruntimeWeb.Tensor("int32", [], [0])
-  // feeds[model.inputNames[2]] = new onnxruntimeWeb.Tensor("int8", [3])
 
   return feeds
 }

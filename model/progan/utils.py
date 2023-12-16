@@ -78,11 +78,12 @@ def load_checkpoint(checkpoint_file, model, optimizer, lr, device):
 #     torch.backends.cudnn.benchmark = False
 
 
-def generate_examples(gen, steps, z_dim, device, truncation=0.7, n=100):
+def generate_examples(gan, steps, z_dim, device, truncation=0.7, n=100):
     """
     Tried using truncation trick here but not sure it actually helped anything, you can
     remove it if you like and just sample from torch.randn
     """
+    gen = gan.generator
     gen.eval()
     alpha = 1.0
     for i in range(n):
@@ -90,5 +91,6 @@ def generate_examples(gen, steps, z_dim, device, truncation=0.7, n=100):
             noise = torch.tensor(truncnorm.rvs(-truncation, truncation, size=(
                 1, z_dim, 1, 1)), device=device, dtype=torch.float32)
             img = gen(noise, alpha, steps)
-            save_image(img*0.5+0.5, f"saved_examples/img_{i}.png")
+            print("examples/img_{i}.png")
+            save_image(img*0.5+0.5, gan.path / f"examples/img_{i}.png")
     gen.train()

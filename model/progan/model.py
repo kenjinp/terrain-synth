@@ -65,6 +65,7 @@ class ProGAN:
         self.writer_path = self.path / f"logs/{timestamp}"
         self.checkpoint_path = self.path / "checkpoint"
         make_path(self.checkpoint_path)
+        make_path(self.path / "examples")
 
         self.writer = SummaryWriter(log_dir=self.writer_path)
 
@@ -110,16 +111,35 @@ class ProGAN:
         print(f"Saving image to {path}")
         save_image(img, path, nrow=5, normalize=True)
 
+    def generate_image(self, batch_size, image_size):
+        noise = torch.randn(batch_size, self.z_dim, 1, 1).to(self.device)
+        step = int(log2(image_size / 4))
+        with torch.no_grad():
+            fake = self.generator(noise, 1.0, step)
+            img = fake[0]
+            img = img.squeeze()
+            img_npy = img.detach().cpu().numpy()
+            return img_npy
+
+    def show_image(self, image_size):
+        img_npy = self.generate_image(1, image_size)
+        plt.imshow(img_npy, cmap="gray")
+        plt.show()
+
     def export(self, step):
         dummy_input_1 = torch.randn(8, self.z_dim, 1, 1).to(self.device)
 
         # This is how we would call the PyTorch model
-        self.generator(dummy_input_1, 1, step)
+        # self.generator(dummy_input_1, 1.0, step)
 
         # This is how to export it with multiple inputs
+        alpha = torch.tensor(1.0).to(self.device)
+        step = torch.tensor(step).to(self.device)
+        args = dummy_input_1, alpha, step
+        print(args)
         with torch.inference_mode(), torch.cuda.amp.autocast():
             torch.onnx.export(self.generator,
-                              args=(dummy_input_1, 1, step),
+                              args=args,
                               f=f"{self.path}/generator.onnx",
                               input_names=["latent", "alpha", "step"],
                               output_names=["output"])
