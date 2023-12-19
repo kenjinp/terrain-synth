@@ -7,7 +7,7 @@ import {
   remap,
 } from "@hello-worlds/planets"
 import { Color, MathUtils, Vector3 } from "three"
-import { BIOMES, biomeColorSplineMap, oceanSpline } from "./Basic.biomes"
+import { BIOMES, biomeColorSplineMap } from "./Basic.biomes"
 import { getPixelColor, interpolateColor } from "./Basic.colors"
 
 export type ThreadParams = {
@@ -103,14 +103,17 @@ const colorGenerator: ChunkGenerator3Initializer<
   ThreadParams,
   Color | ColorArrayWithAlpha
 > = ({ data: { scaleMax, biome } }) => {
+  const color = new Color()
   const colorSpline =
     biomeColorSplineMap[biome] || biomeColorSplineMap[BIOMES.SIM_CITY]
+  const oceanSpline = biomeColorSplineMap[BIOMES.OCEAN]
   return ({ height }) => {
     if (height < 5) {
       return oceanSpline.get(remap(height, -100, 0, 1, 0))
     }
     const remappedHeight = remap(height, 0, scaleMax, 0, 1)
     return colorSpline.get(remappedHeight)
+    // return color.set(0xffffff * Math.random())
   }
 }
 

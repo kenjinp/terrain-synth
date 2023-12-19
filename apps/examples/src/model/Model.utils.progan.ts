@@ -6,7 +6,7 @@ import { generateStandardNormalArray } from "./math"
 
 const modelImageOutputSize = 128
 const batchSize = 8
-const latentDim = 256
+const latentDim = 100
 const dims = [batchSize, latentDim, 1, 1]
 const size = dims.reduce((a, b) => a * b)
 const array = new Array(size).fill(0)

@@ -1,5 +1,5 @@
 import { FlatWorld as HelloFlatWorld } from "@hello-worlds/planets"
-import { FlatWorld } from "@hello-worlds/react"
+import { FlatWorld, FlatWorldChunks } from "@hello-worlds/react"
 import { useThree } from "@react-three/fiber"
 import { Perf } from "r3f-perf"
 import { Color, Euler, MeshPhysicalMaterial, Vector3 } from "three"
@@ -13,7 +13,11 @@ import { Compass } from "../../components/compass/Compass"
 import { Ocean } from "../../components/ocean/Ocean"
 import { Post } from "../../components/post/Post"
 import { MODEL_STATE } from "../../model/Model.gan"
-import { useModel } from "../../model/use-model"
+import {
+  MODEL_STRATEGIES,
+  MODEL_STRATEGY_NAMES,
+  useModel,
+} from "../../model/use-model"
 import { UI } from "../../tunnel"
 import { BIOMES } from "./Basic.biomes"
 import {
@@ -24,22 +28,28 @@ import Worker from "./Basic.worker?worker"
 
 const worker = () => new Worker()
 export default () => {
-  const { scaleMax, showPerf, useNoise, useInterpolation } = useControls({
-    scaleMax: {
-      value: 500,
-      min: 0,
-      max: 2000,
-    },
-    // showHeightmap: true,
-    model: false,
-    showPerf: false,
-    useNoise: true,
-    useInterpolation: true,
-  })
+  const { scaleMax, showPerf, useNoise, useInterpolation, strategy } =
+    useControls({
+      scaleMax: {
+        value: 500,
+        min: 0,
+        max: 2000,
+      },
+      // showHeightmap: true,
+      model: false,
+      showPerf: false,
+      useNoise: true,
+      useInterpolation: true,
+      strategy: {
+        options: MODEL_STRATEGY_NAMES,
+      },
+    })
   const camera = useThree(state => state.camera)
   const scene = useThree(state => state.scene)
   const flatWorld = useRef<HelloFlatWorld<any>>(null)
-  const { state, run, imageData } = useModel()
+  const { state, run, imageData } = useModel(
+    strategy as keyof typeof MODEL_STRATEGIES,
+  )
 
   // const [uv, sand, grass, rocks] = useTexture([
   //   "uv.png",
@@ -114,6 +124,7 @@ export default () => {
 
   const mat = useMemo(() => {
     const csm = scene.userData["csm"]
+    // const material
     const material = new MeshPhysicalMaterial({ vertexColors: true })
     // if (csm) {
     //   csm.setupMaterial(material)
@@ -208,13 +219,20 @@ export default () => {
           <FlatWorld
             ref={flatWorld}
             size={size}
-            minCellSize={64 * 4}
             minCellResolution={128}
+            minCellSize={64 * 4}
+            // minCellResolution={8}
             lodOrigin={camera.position}
             worker={worker}
             data={data}
             skirtDepth={depth}
           >
+            <FlatWorldChunks>
+              {chunk => {
+                // chunk.geometry.computeVertexNormals()
+                return null
+              }}
+            </FlatWorldChunks>
             {/* <meshPhysicalMaterial
               // baseMaterial={MeshPhysicalMaterial}
               vertexColors
@@ -222,6 +240,7 @@ export default () => {
               // map={uv}
               // map={showHeightmap ? newTexture : null}
             /> */}
+            {/* <meshNormalMaterial /> */}
             <primitive object={mat} />
           </FlatWorld>
         )}

@@ -44,14 +44,16 @@ def main():
         device=device
     )
 
-    dataloader, dataset = data.get_loader(
-        image_size, channels_img, batch_size, number_of_datasamples, num_workers, path
-    )
+    gan.export()
 
-    train.train(gan,
-                dataloader, num_epochs,
-                lambda_gp,
-                save_model, critic_iterations)
+    # dataloader, dataset = data.get_loader(
+    #     image_size, channels_img, batch_size, number_of_datasamples, num_workers, path
+    # )
+
+    # train.train(gan,
+    #             dataloader, num_epochs,
+    #             lambda_gp,
+    #             save_model, critic_iterations)
 
 
 if __name__ == "__main__":

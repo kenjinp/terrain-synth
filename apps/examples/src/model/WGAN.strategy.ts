@@ -3,7 +3,7 @@ import "../assets/ort-wasm-simd-threaded.wasm?url"
 import { MODEL_STATE, loadModel, runModel } from "./Model.gan"
 import ModelWorker from "./Model.worker?worker"
 
-export class ThreadedTerrainSynthModel {
+export class WGANStrategy {
   worker = new ModelWorker()
   state: MODEL_STATE = MODEL_STATE.IDLE
   constructor() {}

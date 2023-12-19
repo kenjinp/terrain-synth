@@ -23,7 +23,7 @@ export function createImageElementFromImageData(
   imageElement.src = canvas.toDataURL()
   imageElement.style.zIndex = "9999"
   // imageElement.id = "ocean heights"
-  document.body.appendChild(imageElement)
+  // document.body.appendChild(imageElement)
 
   return imageElement
 }

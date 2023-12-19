@@ -92,7 +92,7 @@ export const ExampleWrapper: React.FC<
         shadow-camera-top={8_000}
         shadow-camera-bottom={-8_000}
         shadow-mapSize={[2048, 1024]}
-        shadow-bias={-0.0001}
+        shadow-bias={-0.003}
       />
       <directionalLight
         ref={dirLightRef}

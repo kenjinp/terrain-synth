@@ -16,7 +16,7 @@
 
 @font-face {
   font-family: "Stoclet";
-  src: url("Stoclet-Bold.ttf") format("truetype"); /* Safari, Android, iOS */
+  src: url("/Stoclet-Bold.ttf") format("truetype"); /* Safari, Android, iOS */
 }
 h1,
 h2,

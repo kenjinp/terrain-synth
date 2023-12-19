@@ -1,6 +1,14 @@
-import { Canvas as R3fCanvas } from "@react-three/fiber"
-import { Suspense } from "react"
-import { PCFSoftShadowMap } from "three"
+import { Canvas as R3fCanvas, useThree } from "@react-three/fiber"
+import React, { Suspense } from "react"
+import { Color, PCFSoftShadowMap } from "three"
+
+const Background: React.FC = () => {
+  useThree(state => {
+    state.scene.background = new Color("#3D4058")
+  })
+  return null
+}
+
 export const Canvas: React.FC<
   React.PropsWithChildren<{ style?: React.CSSProperties }>
 > = ({ children, style }) => {
@@ -11,6 +19,7 @@ export const Canvas: React.FC<
         antialias: true,
         stencil: true,
         depth: true,
+        alpha: true,
       }}
       camera={{
         near: 0.01,
@@ -33,6 +42,7 @@ export const Canvas: React.FC<
       }
     >
       <Suspense fallback={null}>{children}</Suspense>
+      <Background />
     </R3fCanvas>
   )
 }

@@ -1,12 +1,12 @@
 import * as onnxruntimeWeb from "onnxruntime-web"
-import generator from "../assets/generator-test.onnx?url"
+import generator from "../assets/generator.onnx?url"
 import { createImageDataFromArray } from "./image"
 import { generateStandardNormalArray } from "./math"
 
 // This is for the WGAN model
-const modelImageOutputSize = 512
+const modelImageOutputSize = 128
 const batchSize = 1
-const latentDim = 256
+const latentDim = 100
 const dims = [batchSize, latentDim, 1, 1]
 const size = dims.reduce((a, b) => a * b)
 const array = new Array(size).fill(0)

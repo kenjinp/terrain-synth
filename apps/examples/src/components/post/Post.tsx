@@ -1,5 +1,6 @@
 import { useThree } from "@react-three/fiber"
 import { Bloom, EffectComposer, Noise } from "@react-three/postprocessing"
+import { Fog } from "../../effects/fog/Fog"
 
 export const Post: React.FC = () => {
   const gl = useThree(state => state.gl)
@@ -9,12 +10,7 @@ export const Post: React.FC = () => {
   const useEffectComposer = true
   return useEffectComposer ? (
     <EffectComposer>
-      {/* <DepthOfField
-        focusDistance={0}
-        focalLength={0.02}
-        bokehScale={2}
-        height={300}
-      /> */}
+      <Fog camera={camera} />
       <Bloom luminanceThreshold={0.7} luminanceSmoothing={0.9} height={512} />
       <Noise opacity={0.02} />
       {/* <Vignette eskil={false} offset={0.1} darkness={1.1} /> */}

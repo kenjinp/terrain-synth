@@ -66,6 +66,5 @@ function createColorSplineFromColorElevation(colorElevation: ColorElevation[]) {
 export const biomeColorSplineMap = {
   [BIOMES.TROPICAL]: createColorSplineFromColorElevation(tropicalColors),
   [BIOMES.SIM_CITY]: createColorSplineFromColorElevation(simCityColors),
+  [BIOMES.OCEAN]: createColorSplineFromColorElevation(oceanColors),
 }
-
-export const oceanSpline = createColorSplineFromColorElevation(oceanColors)
