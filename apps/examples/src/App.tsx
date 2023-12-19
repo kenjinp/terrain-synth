@@ -58,7 +58,6 @@ const Header = () => {
     </header>
   )
 }
-
 const hidden = true
 export default () => (
   <BrowserRouter>

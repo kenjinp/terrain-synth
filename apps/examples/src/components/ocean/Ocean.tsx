@@ -1,22 +1,29 @@
 import { useTexture } from "@react-three/drei"
 import { BoxGeometryProps, Vector3 } from "@react-three/fiber"
-import { FC, useRef } from "react"
-import { Color, Mesh, RepeatWrapping, SRGBColorSpace } from "three"
+import { FC, useRef, useState } from "react"
+import { Color, Mesh, RepeatWrapping } from "three"
 
 export const Ocean: FC<{
   position: Vector3
   size: BoxGeometryProps["args"]
 }> = ({ position, size }) => {
   const ref = useRef<Mesh>(null)
+  const [mesh, setMesh] = useState<Mesh | null>(null)
   const n1 = useTexture("/ramp2.jpg")
   const n2 = useTexture("/n5.jpg")
   n1.wrapS = n1.wrapT = RepeatWrapping
   n2.wrapS = n2.wrapT = RepeatWrapping
-  n1.colorSpace = SRGBColorSpace
+  // n1.colorSpace = SRGBColorSpace
   n1.needsUpdate = true
 
   return (
-    <mesh position={position} receiveShadow>
+    <mesh
+      ref={ref => {
+        setMesh(ref)
+      }}
+      position={position}
+      receiveShadow
+    >
       <boxGeometry args={size} />
       <meshPhysicalMaterial
         color={new Color(0x4c5a97)}
@@ -25,8 +32,9 @@ export const Ocean: FC<{
         opacity={0.8}
         // normalMap={n2}
       />
+
       {/* <Water
-        mesh={ref.current}
+        mesh={mesh}
         normalScale={[1, 1]}
         roughness={1.0}
         normalMap={n1}

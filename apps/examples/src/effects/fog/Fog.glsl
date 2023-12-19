@@ -63,7 +63,7 @@ vec3 Translate(in vec3 p, in vec3 t) {
     return p - t;
 }
 
-const int MAX_STEPS = 256;
+const int MAX_STEPS = 32;
 
 // Ray marching constants:
 const vec3 GRADIENT_STEP = vec3(0.01, 0.0, 0.0);
@@ -207,88 +207,60 @@ float remap( in float value, in float x1, in float y1, in float x2, in float y2)
   return ((value - x1) * (y2 - x2)) / (y1 - x1) + x2;
 }
 
+float easeOutExpo(in float x) {
+  return x == 1. ? 1. : 1. - pow(2., -10. * x);
+}
+
+float easeInExpo(in float x) {
+  return x == 0. ? 0. : pow(2., 10. * x - 10.);
+}
+
 vec4 rayMarch(in Ray ray, in vec3 box, in vec3 boxPosition, in float maxDistance, in vec3 scene_color) {
     float distanceTraveled = 0.0;
     vec3 color = vec3(0.0, 0.0, 0.0);
-    int intersections = 0;
-
-
     vec3 sunDir = get_sun_direction(ray.origin);
     vec3 accum = scene_color;
     
     float sun_phase = HG_phase(sunDir, ray.direction, SUN_SCATTERING_ANISO)*3.0;
     // float signedDistance = sdBox(Translate( currentPosition, boxPosition), box);
-    float distanceToTravel = min(maxDistance, 12000.0)/ float(MAX_STEPS) / 1.0;
-
     vec2 intersection = boxIntersection(Translate( ray.origin, boxPosition), ray.direction, box);
+    float intersectionNear = intersection.x;
+    float intersectionFar = intersection.y;
+    // no intersection
     if (intersection == vec2(-1.0)) return vec4(accum, 1.0);
-    if (maxDistance < intersection.x) return vec4(accum, 1.0);
+    // terrain or other mesh in front of the sdf box
+    if (maxDistance < intersectionNear) return vec4(accum, 1.0);
 
-    for(int i=0; i<MAX_STEPS; ++i){
-        vec3 currentPosition = ray.origin + ray.direction * distanceTraveled;
-        vec2 signedDistance = boxIntersection(Translate( currentPosition, boxPosition), ray.direction, box);
-        // float density = 1.0 - exp(currentPosition.y / 8000.0);
-        if (signedDistance.y > 0.0) {
-          // float fog = get_fog_density(currentPosition);
-          //   // vec3 normal = calculateNormal(currentPosition);
-          //   // color += vec3(0.0, 0.0, 0.1); //shadeSurface(sceneSurface, currentPosition, ray, normal);
-          //   // color = applyFog(color, distanceTraveled, heightFallOff);
-          //   // color += vec3(0.0, 0.0, currentPosition.y / 1000000.0); 
-            distanceTraveled += distanceToTravel;
-          //   intersections++;
+    Ray begin = Ray(ray.origin + ray.direction * intersectionNear, ray.direction);
+    // if we're inside the box, start at the input ray origin
+    if (intersectionNear < 0.0) {
+      begin = Ray(ray.origin, ray.direction);
+    }
+    Ray end = Ray(ray.origin + ray.direction * min(intersectionFar, maxDistance), ray.direction);
 
-          //   float T = exp(-fog*distanceToTravel);
-          // float fogDensity = 0.000000001;
-          // float fogDepth = maxDistance;
-          // float heightFactor = 0.05;
-          // float fogFactor = heightFactor * exp(-currentPosition.y * fogDensity) * (
-          //     1.0 - exp(-fogDepth * currentPosition.y * fogDensity)) / ray.direction.y;
-          // fogFactor = saturate(fogFactor);
-          // float fogHeightStart = 0.0;
-          // float fogHeightEnd = 5000.0;
+    float intersectionDistance = length(end.origin - begin.origin);
+    float distancePerStep = intersectionDistance / float(MAX_STEPS);
 
-          // float height_factor = clamp((currentPosition.y - fogHeightStart) / (fogHeightEnd - fogHeightStart), 0.0, 1.0);
-  float height_factor = clamp(remap(currentPosition.y, 0.0, 8000.0, 0.5, 0.0), 0.0, 1.0);
+    for(int i = 0; i < MAX_STEPS; ++i) {
+        vec3 currentPosition = begin.origin + ray.direction * (distancePerStep * float(i));
+        
+          float height = currentPosition.y; //clamp(currentPosition.y, 500.0, 5000.0);
+          float height_factor = clamp(remap(height, 500.0, 5000.0, 1.0, 0.0), 0.05, 1.0);
+          height_factor = easeInExpo(height_factor);
           
             // only accumulate if we're in the atmosphere
-            float fog = 0.0000005;
+            float fog = 0.000005;
         
-            vec3 sky = SKY_COLOR * (height_factor * 0.8) * distanceToTravel;
-            vec3 sun = SUN_COLOR * sun_phase * height_factor  * distanceToTravel;
+            vec3 sky = SKY_COLOR * (height_factor * 0.2) * distancePerStep;
+            vec3 sun = SUN_COLOR * sun_phase * (height_factor * 0.5 )  * distancePerStep;
             
-          //   accum = accum*T;
             accum += sky * fog;
             accum += sun * fog;
-
-        }
        
-
-        if (distanceTraveled > maxDistance || intersections > MAX_INTERSECTIONS) {
-          break;
-        }
-
-
-        distanceTraveled += distanceToTravel;
     }
 
     return vec4(accum, 1.0);
 }
-
-// float shortestDistanceToSurface(vec3 eye, vec3 marchingDirection, float start, float end) {
-//     float depth = start;
-//     vec3 box = vec3(1000., 1000., 1000.);
-//     for (int i = 0; i < MAX_MARCHING_STEPS; i++) {
-//         float dist = sdBox(eye + depth * marchingDirection, box);
-//         if (dist < FUDGE_ZONE) {
-// 			return depth;
-//         }
-//         depth += dist;
-//         if (depth >= end) {
-//             return end;
-//         }
-//     }
-//     return end;
-// }
 
 void mainImage(const in vec4 inputColor, const in vec2 uv, const in float depth, out vec4 outputColor) {
   float depthValue = getViewZ(depth);
@@ -296,30 +268,18 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, const in float depth,
   float v_depth = pow(2.0, d / (A_logDepthBufFC() * 0.5));
   float z_view = v_depth - 1.0;
   
-  // straight depth
   float z = texture2D(depthBuffer, uv).x;
   float depthZ = (exp2(z / (A_logDepthBufFC() * 0.5)) - 1.0);
-
   vec3 posWS = _ScreenToWorld(vec3(uv, z));
+  
   vec3 rayOrigin = uCameraPosition;
   vec3 rayDirection = normalize(posWS - uCameraPosition);
+
   float sceneDepth = length(posWS.xyz - uCameraPosition);
-  vec4 addColor = inputColor;
-  vec3 pos = rayOrigin - vec3(0.0);
-  // float sdBoxDepth = sdBox(pos, vec3(10000., 400., 10000.));
 
-  float atmo_radius = 1000.0;
   Ray ray = Ray(rayOrigin, rayDirection);
-  vec4 color = rayMarch(ray, vec3(5000., 5000., 5000.) - vec3(10.), vec3(0.0, 4500.0, 0.0), sceneDepth, inputColor.xyz);
 
-  // float dist = shortestDistanceToSurface(rayOrigin, -rayDirection, MIN_DIST, MAX_DIST);
-
-  // if (boop < 0.) {
-  //   addColor = addColor + vec4(0.0, 1.0, 0.0, 1.0);
-  //   // addColor = applyFog(inputColor, sceneDepth, rayOrigin, rayDirection);
-  // } else {
-  //   // addColor = vec3(1., 0., 0.);
-  // }
+  vec4 color = rayMarch(ray, vec3(5000., 5000., 5000.) - vec3(1.0), vec3(0.0, 4700.0, 0.0), sceneDepth, inputColor.xyz);
 
   outputColor = vec4(color.xyz, 1.0);
 }

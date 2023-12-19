@@ -307,7 +307,7 @@ export function Water(props: any) {
         ref.current.uniforms["viewMatrixInverse"].value =
           state.camera.matrixWorld
         // todo, don't use window
-        ref.current.uniforms["playerPosition"].value = window.playerPosition
+        ref.current.uniforms["playerPosition"].value = new THREE.Vector3() //window.playerPosition
       }
       state.gl.setRenderTarget(null)
     }

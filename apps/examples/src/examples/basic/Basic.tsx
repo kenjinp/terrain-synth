@@ -1,10 +1,10 @@
 import { FlatWorld as HelloFlatWorld } from "@hello-worlds/planets"
-import { FlatWorld, FlatWorldChunks } from "@hello-worlds/react"
+import { FlatWorld } from "@hello-worlds/react"
 import { useThree } from "@react-three/fiber"
 import { Perf } from "r3f-perf"
 import { Color, Euler, MeshPhysicalMaterial, Vector3 } from "three"
 
-import { Box, ContactShadows, Grid, Html } from "@react-three/drei"
+import { Box, ContactShadows, Grid } from "@react-three/drei"
 import { useControls } from "leva"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { match } from "ts-pattern"
@@ -177,7 +177,7 @@ export default () => {
         fadeStrength={40}
       />
 
-      <Html
+      {/* <Html
         position={[0, -depth + 100, size / 2 + 500]}
         transform
         scale={[1000, 1000, 1000]}
@@ -190,7 +190,7 @@ export default () => {
             <a href="https://twitter.com/KennyPirman">kenny.wtf</a>
           </h3>
         </div>
-      </Html>
+      </Html> */}
       <Ocean
         position={[0, -depth / 2 + 5, 0]}
         size={[size - 0.1, depth, size - 0.1]}
@@ -212,6 +212,7 @@ export default () => {
         // Rotate World so it's along the x axis
         rotation={new Euler().setFromVector3(new Vector3(-Math.PI / 2, 0, 0))}
         receiveShadow
+        // visible={false}
       >
         {/* <ParticleField /> */}
 
@@ -220,19 +221,13 @@ export default () => {
             ref={flatWorld}
             size={size}
             minCellResolution={128}
-            minCellSize={64 * 4}
+            minCellSize={64 * 6}
             // minCellResolution={8}
             lodOrigin={camera.position}
             worker={worker}
             data={data}
             skirtDepth={depth}
           >
-            <FlatWorldChunks>
-              {chunk => {
-                // chunk.geometry.computeVertexNormals()
-                return null
-              }}
-            </FlatWorldChunks>
             {/* <meshPhysicalMaterial
               // baseMaterial={MeshPhysicalMaterial}
               vertexColors
