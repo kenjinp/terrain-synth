@@ -31,7 +31,7 @@ export default () => {
   const { scaleMax, showPerf, useNoise, useInterpolation, strategy } =
     useControls({
       scaleMax: {
-        value: 500,
+        value: 700,
         min: 0,
         max: 2000,
       },

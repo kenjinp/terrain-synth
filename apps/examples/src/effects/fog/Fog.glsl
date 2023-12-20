@@ -2,13 +2,15 @@ uniform mat4 uProjectionMatrixInverse; // camera.projectionMatrixInverse
 uniform mat4 uViewMatrixInverse; // camera.matrixWorld
 uniform vec3 uCameraPosition;
 uniform vec3 uCameraWorldDirection;
+uniform float uTime;
+uniform vec3 uSunPosition;
+
+
+#include "./Noise.glsl";
+
+// https://github.com/mrdoob/three.js/blob/fe312e19c2d8fa4219d035f0b83bc13a46fb1927/src/renderers/shaders/ShaderChunk/packing.glsl.js#L24
 
 #define saturate(a) clamp( a, 0.0, 1.0 )
-
-const float MIN_DIST = 0.0;
-const float MAX_DIST = 100000.0;
-const float FUDGE_ZONE = 1e-6;
-const int MAX_MARCHING_STEPS = 1000;
 
 vec3 _ScreenToWorld(vec3 posS) {
   vec2 uv = posS.xy;
@@ -32,28 +34,6 @@ float A_logDepthBufFC () {
   return logDepthBufFC;
 }
 
-
-
-
-vec4 applyFog( in vec4  col,  // color of pixel
-               in float t,    // distnace to point
-               in vec3  ro,   // camera position
-               in vec3  rd )  // camera to point vector
-{
-    float b = 0.0001;
-    float a = 0.0001;
-    float fogAmount = (a/b) * exp(-ro.y*b) * (1.0-exp(-t*rd.y*b))/rd.y;
-    vec4  fogColor  = vec4(0.5,0.6,0.7, 1.0);
-    return mix( col, fogColor, fogAmount );
-}
-
-float sdBox( vec3 p, vec3 b )
-{
-  vec3 q = abs(p) - b;
-  return length(max(q,0.0)) + min(max(q.x,max(q.y,q.z)),0.0);
-}
-
-
 struct Ray {
     vec3 origin;
     vec3 direction;
@@ -63,67 +43,25 @@ vec3 Translate(in vec3 p, in vec3 t) {
     return p - t;
 }
 
-const int MAX_STEPS = 32;
-
-// Ray marching constants:
-const vec3 GRADIENT_STEP = vec3(0.01, 0.0, 0.0);
-const float MAX_TRACE_DISTANCE = 100000.0;
-const float MIN_HIT_DISTANCE = 0.1;
-const float DISTANCE_STEP = 10.0;
-const int MAX_INTERSECTIONS = 1;
-
-const float FOG_HEIGHT_FALLOFF = 0.0000001;
-const float FOG_GLOBAL_DENSITY = 0.0000001;
-
-const int FOG_TRACE_STEPS = 32;
-
-const float FOG_NOISE_SCALE = 0.004;
-const float FOG_NOISE_SPEED = 0.07;
-
-const float CLOUDS_DENSITY = 0.0008;
-const float CLOUDS_MAX_DENSITY_HEIGHT  = 500.0;
-const float CLOUDS_ZERO_DENSITY_HEIGHT = 1000.0;
+const int MAX_STEPS = 64;
 
 const vec3  SUN_COLOR = vec3(20.0, 19.0, 13.0);
 const vec3  SKY_COLOR = vec3(50.0, 100.0, 200.0);
+const vec3 SHADOW_COLOR = vec3(200.0, 0.0, 0.0);
 const float SUN_SCATTERING_ANISO = 0.07;
 
-float b = 0.01;
-float a = 0.00001;
 
-vec3 applyFog( in vec3  col, // color of pixel
-               in float t,
-               in float density)  // distance to point
-{
-    float fogAmount = 1.0 - exp(-t*density);
-    vec3  fogColor  = vec3(0.5,0.6,0.7);
-    return mix( col, fogColor, fogAmount );
-}
+uniform sampler2D uDirectionalShadowMap;
+uniform mat4 uDirectionalShadowMatrix;
 
-// float get_shadow(in vec3 wpos)
-// {
-//     vec3 dummy;
-// 	return terrain_intersect(wpos + vec3(0.0, 0.1, 0.0), get_sun_direction(), 4.0, 40, 0, dummy) ? 0.0 : 1.0;
-// }
+struct DirectionalLightShadow {
+  float bias;
+  float normalBias;
+  float radius;
+  vec2 mapSize;
+};
 
-float get_fog_density(in vec3 pos)
-{
-    vec3 coord = pos*FOG_NOISE_SCALE;
-    // coord.x += iTime * FOG_NOISE_SPEED;
-    
-    // float noise = texture(iChannel1, coord).x;
-    float noise = 0.5;
-    float exp_fog = exp(-pos.y*FOG_HEIGHT_FALLOFF)*FOG_GLOBAL_DENSITY*noise;
-    
-    float cloud_fog = CLOUDS_DENSITY;
-    float k = clamp((pos.y - CLOUDS_MAX_DENSITY_HEIGHT) / (CLOUDS_ZERO_DENSITY_HEIGHT - CLOUDS_MAX_DENSITY_HEIGHT), 0.0, 1.0);
-    cloud_fog *= 1.0 - k;
-
-    cloud_fog *= noise;
-    
-    return exp_fog + cloud_fog;
-}
-
+uniform DirectionalLightShadow uDirectionalLightShadow;
 
 // Henyey-Greenstein phase function
 float HG_phase(in vec3 L, in vec3 V, in float aniso)
@@ -135,57 +73,17 @@ float HG_phase(in vec3 L, in vec3 V, in float aniso)
 
 vec3 get_sun_direction(in vec3 pos)
 {
-    //return SUN_DIRECTION;
-
-    // float angle = iTime/16.0;
-    
     float angle = 1.9;
-    
-    vec3 dir = vec3(pos - vec3(6244.923261707597,
-  6953.7247328594185,
-  6263.770656081942));
+    // Hardcoded to match sun in three.js
+    // should pass this from the tsx component
+    vec3 dir = vec3(pos - uSunPosition);
     dir = normalize(dir);
-    
-    // dir = vec3(0.0, 1.0, 0.0);
     
     return dir;
 }
 
-// vec3 apply_volumetric_fog(in vec3 eye, in vec3 pos, in vec3 scene_color, in float noise)
-// {
-//     vec3 dir = eye - pos;
-//     vec3 V = normalize(dir);
-//     vec3 L = get_sun_direction();
-    
-//     vec3 accum = scene_color;
-    
-//     float sun_phase = HG_phase(L, V, SUN_SCATTERING_ANISO)*3.0;
-    
-//     float step = length(dir) / float(FOG_TRACE_STEPS) / 1.0;
-    
-//     float jitter = noise*2.5;
-    
-//     for(int i=0; i<FOG_TRACE_STEPS; ++i)
-//     {
-//         float k = float(i)/float(FOG_TRACE_STEPS-1);
-//         k += jitter;
-        
-//         vec3  pi = pos + dir * k;
-//         // float s = get_shadow(pi);
-//         float s = 1.0;
-//         float f = get_fog_density(pi);
-        
-//         float T = exp(-f*step);
-        
-//         vec3 sky = SKY_COLOR * step;
-//         vec3 sun = SUN_COLOR * sun_phase * s * step;
-        
-//         accum = accum*T;
-//         accum += sky * f;
-//         accum += sun * f;
-//     }
-//     return accum;
-// }
+	// vec3 shadowWorldNormal = inverseTransformDirection( transformedNormal, viewMatrix );
+	// vec4 shadowWorldPosition;
 
 vec2 boxIntersection( in vec3 ro, in vec3 rd, vec3 boxSize) 
 {
@@ -197,9 +95,6 @@ vec2 boxIntersection( in vec3 ro, in vec3 rd, vec3 boxSize)
     float tN = max( max( t1.x, t1.y ), t1.z );
     float tF = min( min( t2.x, t2.y ), t2.z );
     if( tN>tF || tF<0.0) return vec2(-1.0); // no intersection
-    // outNormal = (tN>0.0) ? step(vec3(tN),t1)) : // ro ouside the box
-    //                        step(t2,vec3(tF)));  // ro inside the box
-    // outNormal *= -sign(rd);
     return vec2( tN, tF );
 }
 
@@ -241,22 +136,47 @@ vec4 rayMarch(in Ray ray, in vec3 box, in vec3 boxPosition, in float maxDistance
     float intersectionDistance = length(end.origin - begin.origin);
     float distancePerStep = intersectionDistance / float(MAX_STEPS);
 
+    float fog = 0.0002 / float(MAX_STEPS);
+
+// Offsetting the position used for querying occlusion along the world normal can be used to reduce shadow acne.
+    vec3 shadowWorldNormal = inverseTransformDirection(sunDir, viewMatrix );
+
     for(int i = 0; i < MAX_STEPS; ++i) {
-        vec3 currentPosition = begin.origin + ray.direction * (distancePerStep * float(i));
-        
-          float height = currentPosition.y; //clamp(currentPosition.y, 500.0, 5000.0);
-          float height_factor = clamp(remap(height, 500.0, 5000.0, 1.0, 0.0), 0.05, 1.0);
-          height_factor = easeInExpo(height_factor);
-          
-            // only accumulate if we're in the atmosphere
-            float fog = 0.000005;
-        
-            vec3 sky = SKY_COLOR * (height_factor * 0.2) * distancePerStep;
-            vec3 sun = SUN_COLOR * sun_phase * (height_factor * 0.5 )  * distancePerStep;
-            
+      vec3 currentPosition = begin.origin + ray.direction * (distancePerStep * float(i));
+      
+      float height = currentPosition.y;
+      float height_factor = clamp(remap(height, 400.0, 10000.0, 1.0, 0.0), 0.0, 1.0);
+      height_factor = easeInExpo(height_factor);
+
+      // shadow stuff
+      vec4 shadowWorldPosition = vec4(currentPosition, 1.0) + vec4( shadowWorldNormal * uDirectionalLightShadow.normalBias, 0. ); //+ vec4(offset, 0.); // <-- see offset
+      vec4 directionalShadowCoord = uDirectionalShadowMatrix * shadowWorldPosition;
+
+      // vec4 shadowCoord = uDirectionalShadowMatrix * vec4(currentPosition, 1.0);
+      directionalShadowCoord.xyz /= directionalShadowCoord.w;
+
+      float shadowDepth = texture(uDirectionalShadowMap, directionalShadowCoord.xy).r;
+      // shadowDepth = unpackRGBAToDepth( texture2D( uDirectionalShadowMap, shadowCoord.xy ) );
+      shadowDepth = unpackRGBAToDepth( texture2D( uDirectionalShadowMap, directionalShadowCoord.xy ) );
+
+      float dianceToSun = length(uSunPosition - currentPosition);
+
+      // only accumulate if we're in the atmosphere
+  
+      vec3 sky = SKY_COLOR * (height_factor * 0.2) * distancePerStep;
+      vec3 sun = SUN_COLOR * sun_phase * (height_factor * 0.5 )  * distancePerStep;
+      
+      // accum += sky * fog;
+      // accum += sun * fog;
+
+                // Point is in shadow
+        if (shadowDepth < directionalShadowCoord.z) {
+            // accum += SHADOW_COLOR * vec3(shadowDepth);
+        } else {
             accum += sky * fog;
             accum += sun * fog;
-       
+        }
+      // accum += SHADOW_COLOR * vec3(shadowDepth);
     }
 
     return vec4(accum, 1.0);

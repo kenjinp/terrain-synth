@@ -107,9 +107,20 @@ const colorGenerator: ChunkGenerator3Initializer<
   const colorSpline =
     biomeColorSplineMap[biome] || biomeColorSplineMap[BIOMES.SIM_CITY]
   const oceanSpline = biomeColorSplineMap[BIOMES.OCEAN]
-  return ({ height }) => {
+  const terrainNoiseFudgeHeight = 200
+  const colorNoise = new Noise({
+    seed: "blah",
+    noiseType: NOISE_TYPES.RIGID,
+    height: terrainNoiseFudgeHeight,
+    scale: 1000,
+  })
+  return ({ height, worldPosition }) => {
     if (height < 5) {
       return oceanSpline.get(remap(height, -100, 0, 1, 0))
+    }
+    // we dont want to fudge the color altitude for the ocean, so let's make sure we're a safe distance away
+    if (height > terrainNoiseFudgeHeight) {
+      height = height + colorNoise.getFromVector(worldPosition)
     }
     const remappedHeight = remap(height, 0, scaleMax, 0, 1)
     return colorSpline.get(remappedHeight)

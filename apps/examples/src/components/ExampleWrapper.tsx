@@ -7,9 +7,15 @@ import { DirectionalLight, Object3D, Vector3 } from "three"
 export const windowBounds = "window-bounds"
 
 const lightOrigin = new Vector3(
-  6244.923261707597,
-  6953.7247328594185,
-  6263.770656081942,
+  // 6244.923261707597,
+  // 6953.7247328594185,
+  // 6263.770656081942,
+  // 9504.849326170277,
+  // 1460.8306729382275,
+  // 5262.743402506646,
+  7728.335020729982,
+  4494.66353967614,
+  6630.455936901849,
 )
 const lightTarget = new Vector3(0, 0, 0)
 const lookAtVector = new Vector3(0, 0, -1)
@@ -86,7 +92,7 @@ export const ExampleWrapper: React.FC<
         target={target}
         castShadow
         color={"#FFFFFF"}
-        shadow-camera-far={15000}
+        shadow-camera-far={18000}
         shadow-camera-left={-8_000}
         shadow-camera-right={8_000}
         shadow-camera-top={8_000}
