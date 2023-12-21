@@ -9,14 +9,14 @@ importers:
   .:
     dependencies:
       '@hello-worlds/core':
-        specifier: file:../hello-worlds/packages/core
-        version: file:../hello-worlds/packages/core
+        specifier: ^0.0.9
+        version: 0.0.9
       '@hello-worlds/planets':
-        specifier: file:../hello-worlds/packages/planets
-        version: file:../hello-worlds/packages/planets(@hello-worlds/core@0.0.9)(three@0.158.0)
+        specifier: ^0.0.23
+        version: 0.0.23(@hello-worlds/core@0.0.9)(three@0.158.0)
       '@hello-worlds/react':
-        specifier: file:../hello-worlds/packages/react
-        version: file:../hello-worlds/packages/react(@hello-worlds/core@0.0.9)(@hello-worlds/planets@0.0.21)(@react-three/drei@9.88.7)(@react-three/fiber@8.15.8)(react-dom@18.2.0)(react@18.2.0)(three@0.158.0)
+        specifier: ^0.0.25
+        version: 0.0.25(@hello-worlds/core@0.0.9)(@hello-worlds/planets@0.0.23)(@react-three/drei@9.88.7)(@react-three/fiber@8.15.8)(react-dom@18.2.0)(react@18.2.0)(three@0.158.0)
       '@react-three/drei':
         specifier: 9.88.7
         version: 9.88.7(@react-three/fiber@8.15.8)(@types/three@0.141.0)(react-dom@18.2.0)(react@18.2.0)(three@0.158.0)
@@ -912,6 +912,46 @@ packages:
 
   /@floating-ui/utils@0.1.6:
     resolution: {integrity: sha512-OfX7E2oUDYxtBvsuS4e/jSn4Q9Qb6DzgeYtsAdkPZ47znpoNsMgZw0+tVijiv3uGNR6dgNlty6r9rzIzHjtd/A==}
+    dev: false
+
+  /@hello-worlds/core@0.0.9:
+    resolution: {integrity: sha512-g6ys9dswc/HXrTqkSUxQdOZ/c3t5t/B5Kn6fi+kpLj+faOpD5VHPbtxJ4bwARaKqVdVMPmXrszjIVtE0YEwjiQ==}
+    dependencies:
+      rand-seed: 1.0.2
+    dev: false
+
+  /@hello-worlds/planets@0.0.23(@hello-worlds/core@0.0.9)(three@0.158.0):
+    resolution: {integrity: sha512-Z9/AHzutoAFM5qTncQijuHMjMlVGgoR9v76RwTPl+DxRPl3cIHd7AsIVr/JtZ1729mSE6bj0mqSd+gpNNotkJg==}
+    peerDependencies:
+      '@hello-worlds/core': 0.0.9
+      three: ^0.143.0
+    dependencies:
+      '@hello-worlds/core': 0.0.9
+      simplex-noise: 3.0.1
+      three: 0.158.0
+      three-mesh-bvh: 0.5.24(three@0.158.0)
+    dev: false
+
+  /@hello-worlds/react@0.0.25(@hello-worlds/core@0.0.9)(@hello-worlds/planets@0.0.23)(@react-three/drei@9.88.7)(@react-three/fiber@8.15.8)(react-dom@18.2.0)(react@18.2.0)(three@0.158.0):
+    resolution: {integrity: sha512-iy4f8h6Kz1Ly4fhiuGfdmX0ZLSpX82Eu3lgw71mwSJJi3H/wBVQr4cHGGoCqEhthbQRiX/nCDMn53O1gwBwbNA==}
+    peerDependencies:
+      '@hello-worlds/core': ^0.0.9
+      '@hello-worlds/planets': ^0.0.23
+      '@react-three/drei': ^9.30.1
+      '@react-three/fiber': ^8.8.2
+      react: ^18.0.0
+      react-dom: ^18.0.0
+      three: '>=0.133'
+    dependencies:
+      '@hello-worlds/core': 0.0.9
+      '@hello-worlds/planets': 0.0.23(@hello-worlds/core@0.0.9)(three@0.158.0)
+      '@hmans/use-rerender': 0.0.2(react@18.2.0)
+      '@react-three/drei': 9.88.7(@react-three/fiber@8.15.8)(@types/three@0.141.0)(react-dom@18.2.0)(react@18.2.0)(three@0.158.0)
+      '@react-three/fiber': 8.15.8(react-dom@18.2.0)(react@18.2.0)(three@0.158.0)
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      three: 0.158.0
+      three-stdlib: 2.28.7(three@0.158.0)
     dev: false
 
   /@hmans/use-rerender@0.0.2(react@18.2.0):
@@ -6404,49 +6444,4 @@ packages:
       '@types/react': 18.2.15
       react: 18.2.0
       use-sync-external-store: 1.2.0(react@18.2.0)
-    dev: false
-
-  file:../hello-worlds/packages/core:
-    resolution: {directory: ../hello-worlds/packages/core, type: directory}
-    name: '@hello-worlds/core'
-    dependencies:
-      rand-seed: 1.0.2
-    dev: false
-
-  file:../hello-worlds/packages/planets(@hello-worlds/core@0.0.9)(three@0.158.0):
-    resolution: {directory: ../hello-worlds/packages/planets, type: directory}
-    id: file:../hello-worlds/packages/planets
-    name: '@hello-worlds/planets'
-    peerDependencies:
-      '@hello-worlds/core': 0.0.9
-      three: ^0.143.0
-    dependencies:
-      '@hello-worlds/core': file:../hello-worlds/packages/core
-      simplex-noise: 3.0.1
-      three: 0.158.0
-      three-mesh-bvh: 0.5.24(three@0.158.0)
-    dev: false
-
-  file:../hello-worlds/packages/react(@hello-worlds/core@0.0.9)(@hello-worlds/planets@0.0.21)(@react-three/drei@9.88.7)(@react-three/fiber@8.15.8)(react-dom@18.2.0)(react@18.2.0)(three@0.158.0):
-    resolution: {directory: ../hello-worlds/packages/react, type: directory}
-    id: file:../hello-worlds/packages/react
-    name: '@hello-worlds/react'
-    peerDependencies:
-      '@hello-worlds/core': ^0.0.9
-      '@hello-worlds/planets': ^0.0.21
-      '@react-three/drei': ^9.30.1
-      '@react-three/fiber': ^8.8.2
-      react: ^18.0.0
-      react-dom: ^18.0.0
-      three: '>=0.133'
-    dependencies:
-      '@hello-worlds/core': file:../hello-worlds/packages/core
-      '@hello-worlds/planets': file:../hello-worlds/packages/planets(@hello-worlds/core@0.0.9)(three@0.158.0)
-      '@hmans/use-rerender': 0.0.2(react@18.2.0)
-      '@react-three/drei': 9.88.7(@react-three/fiber@8.15.8)(@types/three@0.141.0)(react-dom@18.2.0)(react@18.2.0)(three@0.158.0)
-      '@react-three/fiber': 8.15.8(react-dom@18.2.0)(react@18.2.0)(three@0.158.0)
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-      three: 0.158.0
-      three-stdlib: 2.28.7(three@0.158.0)
     dev: false

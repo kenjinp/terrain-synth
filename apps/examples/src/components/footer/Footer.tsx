@@ -13,10 +13,13 @@ export const Footer: React.FC<React.PropsWithChildren> = ({ children }) => {
           {COMMIT_INFO.shortHash}
         </a>{" "}
         <span title="build date">
-          {new Date(BUILD_INFO.buildTime).toLocaleDateString("fr")}
+          {new Date(BUILD_INFO.buildTime).toLocaleDateString()} WIP
         </span>
       </div>
       {children}
+      <div>
+        <a href="https://ko-fi.com/kennywtf">Support this project</a>
+      </div>
     </footer>
   )
 }

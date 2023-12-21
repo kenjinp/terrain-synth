@@ -193,7 +193,7 @@ export default () => {
       </Html> */}
       <Ocean
         position={[0, -depth / 2 + 5, 0]}
-        size={[size - 0.1, depth, size - 0.1]}
+        size={[size - 0.1, depth, size - 0.1, 1000, 10, 1000]}
       />
       <group visible={false}>
         <Box scale={[size + 100, 1, size + 100]} position-y={0}>

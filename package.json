@@ -19,9 +19,9 @@
     "ship:docs": "flyctl deploy ./ --build-arg LIVEBLOCKS_API_KEY=$LIVEBLOCKS_API_KEY -c apps/docs/fly.toml --dockerfile=./apps/docs/Dockerfile"
   },
   "dependencies": {
-    "@hello-worlds/core": "file:../hello-worlds/packages/core",
-    "@hello-worlds/planets": "file:../hello-worlds/packages/planets",
-    "@hello-worlds/react": "file:../hello-worlds/packages/react",
+    "@hello-worlds/core": "^0.0.9",
+    "@hello-worlds/planets": "^0.0.23",
+    "@hello-worlds/react": "^0.0.25",
     "@react-three/drei": "9.88.7",
     "@react-three/fiber": "8.15.8",
     "@react-three/postprocessing": "^2.15.11",

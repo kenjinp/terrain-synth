@@ -58,7 +58,7 @@ const Header = () => {
     </header>
   )
 }
-const hidden = true
+const hidden = false
 export default () => (
   <BrowserRouter>
     <Leva hidden={hidden} />
