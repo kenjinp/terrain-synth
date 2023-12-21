@@ -4,7 +4,7 @@ Example-based Terrain Generation powered by real-earth datasets.
 
 <img src="https://github.com/kenjinp/terrain-synth/blob/main/media/example.png?raw=true" alt="image of the terrain renderer" />
 
-This is a platform for me to hack around on various machine-learning content generation techniques.
+This is a platform for me to hack around on various machine-learning content generation / manipulation techniques. It uses the [Hello Worlds library](https://github.com/kenjinp/hello-worlds) to render the terrain.
 
 The current model is very naïve, expect the output to look crap.
 
@@ -25,6 +25,7 @@ Terrain elevation data input
 - pytorch for ML learning
 - onnex runtime (https://onnxruntime.ai/) for model inference
 - react / typescript / vite for the app
+- [Hello Worlds library](https://github.com/kenjinp/hello-worlds) for terrain rendering
 - react-three/fiber / threejs for 3D rendering
 - pulumi / aws for deployment
 
