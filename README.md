@@ -11,12 +11,14 @@ The current model is very naïve, expect the output to look crap.
 ### Example Input
 
 Terrain elevation data input
-<img src="https://github.com/kenjinp/terrain-synth/blob/main/media/example-model-input.png?raw=true" alt="real earth terrain heightmap example used as input in GAN model" height='128px'/>
+<br/>
+<img src="https://github.com/kenjinp/terrain-synth/blob/main/media/example-model-input.png?raw=true" alt="real earth terrain heightmap example used as input in GAN model" height='256px'/>
 
 ### Example Output
 
 (Silly) generated terrain from the [pytorch GAN model](https://github.com/kenjinp/terrain-synth/tree/main/model/gan)
-<img src="https://github.com/kenjinp/terrain-synth/blob/main/media/example-gan-output.png?raw=true" alt="generated terrain heightmap from the GAN model]" height='128px'/>
+<br/>
+<img src="https://github.com/kenjinp/terrain-synth/blob/main/media/example-gan-output.png?raw=true" alt="generated terrain heightmap from the GAN model]" height='256px'/>
 
 ## Technologies
 
