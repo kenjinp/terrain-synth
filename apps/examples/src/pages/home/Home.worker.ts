@@ -7,8 +7,8 @@ import {
   remap,
 } from "@hello-worlds/planets"
 import { Color, MathUtils, Vector3 } from "three"
-import { BIOMES, biomeColorSplineMap } from "./Basic.biomes"
-import { getPixelColor, interpolateColor } from "./Basic.colors"
+import { BIOMES, biomeColorSplineMap } from "./Home.biomes"
+import { getPixelColor, interpolateColor } from "./Home.colors"
 
 export type ThreadParams = {
   seed: string

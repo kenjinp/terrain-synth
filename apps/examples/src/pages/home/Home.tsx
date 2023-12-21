@@ -19,12 +19,9 @@ import {
   useModel,
 } from "../../model/use-model"
 import { UI } from "../../tunnel"
-import { BIOMES } from "./Basic.biomes"
-import {
-  createImageElementFromImageData,
-  processImageData,
-} from "./Basic.image"
-import Worker from "./Basic.worker?worker"
+import { BIOMES } from "./Home.biomes"
+import { createImageElementFromImageData, processImageData } from "./Home.image"
+import Worker from "./Home.worker?worker"
 
 const worker = () => new Worker()
 export default () => {

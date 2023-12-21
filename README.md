@@ -2,17 +2,21 @@
 
 Example-based Terrain Generation powered by real-earth datasets.
 
+<img src="https://github.com/kenjinp/terrain-synth/blob/main/media/example.png?raw=true" alt="image of the terrain renderer" />
+
 This is a platform for me to hack around on various machine-learning content generation techniques.
 
 The current model is very naïve, expect the output to look crap.
 
 ### Example Input
 
-Terrain elevation data downsampled
+Terrain elevation data input
+<img src="https://github.com/kenjinp/terrain-synth/blob/main/media/example-model-input.png?raw=true" alt="real earth terrain heightmap example used as input in GAN model" height='128px'/>
 
 ### Example Output
 
-(Silly) generated terrain
+(Silly) generated terrain from the [pytorch GAN model](https://github.com/kenjinp/terrain-synth/tree/main/model/gan)
+<img src="https://github.com/kenjinp/terrain-synth/blob/main/media/example-gan-output.png?raw=true" alt="generated terrain heightmap from the GAN model]" height='128px'/>
 
 ## Technologies
 
@@ -24,6 +28,6 @@ Terrain elevation data downsampled
 
 ## Datasets
 
-From Kaggle user THOMAS PAPPAS https://www.kaggle.com/datasets/tpapp157/earth-terrain-height-and-segmentation-map-images
+Earth Terrain - [From Kaggle user THOMAS PAPPAS ](https://www.kaggle.com/datasets/tpapp157/earth-terrain-height-and-segmentation-map-images)
 
 <a href='http://www.recurse.com' title='Made with love at the Recurse Center'><img src='https://cloud.githubusercontent.com/assets/2883345/11322972/9e553260-910b-11e5-8de9-a5bf00c352ef.png' height='59px'/></a>

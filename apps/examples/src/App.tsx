@@ -11,7 +11,7 @@ import { Leva } from "leva"
 import { Canvas } from "./components/Canvas"
 import { ExampleWrapper } from "./components/ExampleWrapper"
 import { Footer } from "./components/footer/Footer"
-import Basic from "./examples/basic/Basic"
+import Basic from "./pages/home/Home"
 import { UI } from "./tunnel"
 
 interface IRoute {
@@ -58,7 +58,7 @@ const Header = () => {
     </header>
   )
 }
-const hidden = false
+const hidden = true
 export default () => (
   <BrowserRouter>
     <Leva hidden={hidden} />

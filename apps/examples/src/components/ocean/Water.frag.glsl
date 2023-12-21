@@ -158,7 +158,7 @@ void main() {
     // Water Color
     vec3 waterColor = vec3(184.95/360.0, 0.5243, 0.5627); waterColor = hsl2rgb(waterColor);
     vec3 absorbColor = vec3(1.0) - waterColor;
-    float absorbVal = 1.0 - exp(-0.0002 * depthZ);
+    float absorbVal = 1.0 - exp(-0.0005 * depthZ);
     vec3 sceneColor = sceneTexture.rgb;
     vec3 subtractiveColor = absorbColor * absorbVal;
     vec3 underWaterColor = sceneColor - subtractiveColor;

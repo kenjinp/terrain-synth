@@ -16,6 +16,4 @@ data
 __pycache__
 notebooks
 .terrain-*
-# Disable for now until I can get this working
-.github 
 .venv
