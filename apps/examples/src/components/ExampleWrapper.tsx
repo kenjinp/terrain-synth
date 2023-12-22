@@ -87,7 +87,7 @@ export const ExampleWrapper: React.FC<
       <directionalLight
         ref={dirLightRef}
         name="sun-shadow"
-        intensity={lightIntensity * 0.8}
+        intensity={lightIntensity * 0.7}
         position={lightOrigin}
         target={target}
         castShadow
@@ -103,17 +103,10 @@ export const ExampleWrapper: React.FC<
       <directionalLight
         ref={dirLightRef}
         name="sun-no-shadow"
-        intensity={lightIntensity * 0.2}
+        intensity={lightIntensity * 0.3}
         position={lightOrigin}
         target={target}
         color={"#A9AB74"}
-        shadow-camera-far={15000}
-        shadow-camera-left={-8_000}
-        shadow-camera-right={8_000}
-        shadow-camera-top={8_000}
-        shadow-camera-bottom={-8_000}
-        shadow-mapSize={[2048, 1024]}
-        shadow-bias={-0.0001}
       />
       {/* {dirLightRef.current && (
         <directionalLightHelper args={[dirLightRef.current, 10]} />

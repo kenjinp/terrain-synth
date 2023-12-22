@@ -25,7 +25,7 @@ export const Canvas: React.FC<
         near: 0.01,
         far: Number.MAX_SAFE_INTEGER,
       }}
-      shadows={{ type: PCFSoftShadowMap }}
+      shadows="soft"
       shadow-camera-far={1000000}
       shadow-camera-left={-10000}
       shadow-camera-right={10000}

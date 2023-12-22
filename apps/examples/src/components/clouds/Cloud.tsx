@@ -17,12 +17,10 @@ import {
   MathUtils,
   Matrix4,
   MeshBasicMaterial,
-  MeshDepthMaterial,
   MeshLambertMaterial,
   Object3D,
   Quaternion,
   REVISION,
-  RGBADepthPacking,
   Texture,
   Vector3,
 } from "three"
@@ -141,6 +139,12 @@ const cpos = /* @__PURE__ */ new Vector3()
 const cquat = /* @__PURE__ */ new Quaternion()
 const scale = /* @__PURE__ */ new Vector3()
 const shadowQuat = /* @__PURE__ */ new Quaternion()
+const shadowQuatMultiplier = /* @__PURE__ */ new Quaternion(
+  0,
+  0,
+  0,
+  0,
+).setFromAxisAngle(new Vector3(0, 1, 0), Math.PI)
 
 const context = /* @__PURE__ */ React.createContext<
   React.MutableRefObject<CloudState[]>
@@ -160,17 +164,6 @@ export const Clouds = /* @__PURE__ */ React.forwardRef<Group, CloudsProps>(
     fref,
   ) => {
     const cloudTexture = useTexture(texture) as Texture
-    const alphaMapTexture = useTexture(ALPHA_MAP_URL) as Texture
-
-    const CloudDepthMaterial = React.useMemo(() => {
-      const mat = new MeshDepthMaterial({
-        depthPacking: RGBADepthPacking,
-        alphaMap: alphaMapTexture,
-        alphaTest: 0.5,
-      })
-
-      return mat
-    }, [])
 
     const CloudMaterial = React.useMemo(() => {
       return class extends (material as typeof Material) {
@@ -228,15 +221,13 @@ export const Clouds = /* @__PURE__ */ React.forwardRef<Group, CloudsProps>(
     const pos = new Vector3()
     const lookAtObject = new Object3D()
 
-    console.log({ fref: fref.current })
-
     useFrame((state, delta) => {
       t = state.clock.getElapsedTime()
       parentMatrix.copy(instance.current.matrixWorld).invert()
       state.camera.matrixWorld.decompose(cpos, cquat, scale)
 
       lookAtObject.lookAt(lightOrigin)
-      shadowQuat.copy(lookAtObject.quaternion)
+      shadowQuat.copy(lookAtObject.quaternion).multiply(shadowQuatMultiplier)
 
       for (index = 0; index < clouds.current.length; index++) {
         config = clouds.current[index]
@@ -361,7 +352,6 @@ export const Clouds = /* @__PURE__ */ React.forwardRef<Group, CloudsProps>(
             frustumCulled={false}
             castShadow
             ref={shadowInstance}
-            customDepthMaterial={CloudDepthMaterial}
             args={[null as any, null as any, limit]}
           >
             <instancedBufferAttribute
@@ -369,20 +359,20 @@ export const Clouds = /* @__PURE__ */ React.forwardRef<Group, CloudsProps>(
               attach="instanceColor"
               args={[colors, 3]}
             />
-            <boxGeometry args={[...imageBounds] as any}>
+            <planeGeometry args={[...imageBounds] as any}>
               <instancedBufferAttribute
                 usage={DynamicDrawUsage}
                 attach="attributes-opacity"
                 args={[opacities, 1]}
               />
-            </boxGeometry>
+            </planeGeometry>
             <meshBasicMaterial
               key={material.name + "-shadow"}
-              map={cloudTexture}
+              alphaMap={cloudTexture}
+              alphaTest={0.999}
               transparent
               depthWrite={false}
               opacity={0}
-              color="blue"
             />
           </instancedMesh>
         </context.Provider>
