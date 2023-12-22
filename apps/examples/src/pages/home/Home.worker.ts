@@ -103,7 +103,7 @@ const colorGenerator: ChunkGenerator3Initializer<
   ThreadParams,
   Color | ColorArrayWithAlpha
 > = ({ data: { scaleMax, biome } }) => {
-  const color = new Color()
+  // const color = new Color()
   const colorSpline =
     biomeColorSplineMap[biome] || biomeColorSplineMap[BIOMES.SIM_CITY]
   const oceanSpline = biomeColorSplineMap[BIOMES.OCEAN]

@@ -1,6 +1,5 @@
-import * as onnxruntimeWeb from "onnxruntime-web"
 import "../assets/ort-wasm-simd-threaded.wasm?url"
-import { MODEL_STATE, loadModel, runModel } from "./Model.gan"
+import { MODEL_STATE } from "./Model.gan"
 import ModelWorker from "./Model.worker?worker"
 
 export class WGANStrategy {
@@ -24,9 +23,9 @@ export class WGANStrategy {
     })
   }
 
-  command<T = ImageData>(command: string) {
+  command<T = ImageData>(command: string, message?: Record<string, any>) {
     return new Promise<T>((resolve, reject) => {
-      this.worker.postMessage({ command })
+      this.worker.postMessage({ command, ...message })
       this.worker.onmessage = event => {
         const { result, error } = event.data
         if (error) {
@@ -39,51 +38,11 @@ export class WGANStrategy {
     })
   }
 
-  load() {
-    return this.command("load")
+  load(seed?: string) {
+    return this.command("load", { seed })
   }
 
-  run() {
-    return this.command("run")
-  }
-}
-
-export class TerrainSynthModel {
-  state: MODEL_STATE = MODEL_STATE.IDLE
-  model?: onnxruntimeWeb.InferenceSession
-  listeners: ((state: MODEL_STATE) => void)[] = []
-  constructor() {}
-
-  addStateListener(listener: (state: MODEL_STATE) => void) {
-    this.listeners.push((event: any) => {
-      const { state, result, error } = event
-      if (error) {
-        console.error(error)
-      }
-      if (state) {
-        this.state = state
-      }
-      if (result) {
-        this.state = MODEL_STATE.IDLE
-      }
-      listener(this.state)
-    })
-  }
-
-  postMessage(message: any) {
-    this.listeners.forEach(listener => listener(message))
-  }
-
-  async load() {
-    const { model, result } = await loadModel(this.postMessage.bind(this))
-    this.model = model
-    return result
-  }
-
-  async run() {
-    if (!this.model) {
-      throw new Error("Model not loaded")
-    }
-    return await runModel(this.model!, this.postMessage.bind(this))
+  run(seed?: string) {
+    return this.command("run", { seed })
   }
 }

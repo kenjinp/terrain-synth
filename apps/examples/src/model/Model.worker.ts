@@ -8,13 +8,14 @@ import { loadModel, runModel } from "./Model.gan"
 let model: onnxruntimeWeb.InferenceSession
 
 onmessage = async (event: MessageEvent) => {
-  const { command } = event.data
+  const { command, seed } = event.data
+  console.log({ command, seed })
   try {
     if (command === "load") {
-      const { model: m } = await loadModel(postMessage)
+      const { model: m } = await loadModel(postMessage, seed)
       model = m
     } else if (command === "run") {
-      await runModel(model, postMessage)
+      await runModel(model, postMessage, seed)
     } else {
       throw new Error("Unknown command: " + command)
     }

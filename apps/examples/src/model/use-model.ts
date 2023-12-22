@@ -9,7 +9,10 @@ export const MODEL_STRATEGIES = {
 
 export const MODEL_STRATEGY_NAMES = Object.keys(MODEL_STRATEGIES)
 
-export function useModel(strategy: keyof typeof MODEL_STRATEGIES = "WGAN") {
+export function useModel(
+  strategy: keyof typeof MODEL_STRATEGIES = "WGAN",
+  seed?: string,
+) {
   const [terrainModel, setTerrainModel] = useState<
     WGANStrategy | ImageStrategy
   >(() => new MODEL_STRATEGIES[strategy]())
@@ -22,23 +25,27 @@ export function useModel(strategy: keyof typeof MODEL_STRATEGIES = "WGAN") {
     setState(model.state)
   }, [strategy])
 
-  const load = useCallback(async () => {
-    const imageData = await terrainModel.load()
-    console.log({ imageData })
-    setImageData(imageData)
-  }, [terrainModel])
-  const run = useCallback(async () => {
-    const imageData = await terrainModel.run()
-    setImageData(imageData)
-  }, [terrainModel])
+  const load = useCallback(
+    async (seed?: string) => {
+      const imageData = await terrainModel.load(seed)
+      setImageData(imageData)
+    },
+    [terrainModel],
+  )
+  const run = useCallback(
+    async (seed?: string) => {
+      const imageData = await terrainModel.run(seed)
+      setImageData(imageData)
+    },
+    [terrainModel],
+  )
 
   useEffect(() => {
     terrainModel.addStateListener(s => {
-      console.log(s)
       setState(s)
     })
-    load()
-  }, [terrainModel, load])
+    load(seed)
+  }, [terrainModel, load, seed])
 
   return {
     state,

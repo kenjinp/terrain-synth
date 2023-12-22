@@ -1,11 +1,5 @@
-import { useEffect, useState } from "react"
-import {
-  BrowserRouter,
-  Route,
-  Routes,
-  useLocation,
-  useNavigate,
-} from "react-router-dom"
+import React from "react"
+import { BrowserRouter, Route, Routes } from "react-router-dom"
 
 import { Leva } from "leva"
 import { Canvas } from "./components/Canvas"
@@ -28,63 +22,36 @@ const routes: IRoute[] = [
   },
 ]
 
-const Header = () => {
-  const location = useLocation()
-  const navigate = useNavigate()
-  const [currentPath, setCurrentPath] = useState(location.pathname)
-
-  useEffect(() => {
-    // const name = routes.find(route => route.path === currentPath)?.name
-    // here change TITLE stuff
-    // document.title = `Hello Worlds Examples${name ? " - " + name : ""}`
-    navigate(currentPath)
-  }, [currentPath])
-
+const hidden = true
+const App: React.FC = () => {
   return (
-    <header>
-      {/* <a className="logo" href="https://github.com/kenjinp/hello-worlds">
-        Hello Worlds
-      </a>
-      <select
-        value={currentPath}
-        onChange={event => setCurrentPath(event.target.value)}
-      >
+    <BrowserRouter>
+      <Leva hidden={hidden} />
+      <Routes>
         {routes.map(route => (
-          <option value={route.path} key={route.path}>
-            {route.name}
-          </option>
+          <Route
+            path={route.path}
+            key={route.path}
+            element={
+              <>
+                <div id="ui">
+                  {/* Anything that goes into the tunnel, we want to render here. */}
+                  <UI.Out />
+                </div>
+
+                <Canvas>
+                  <ExampleWrapper>
+                    <route.component />
+                  </ExampleWrapper>
+                </Canvas>
+              </>
+            }
+          />
         ))}
-      </select> */}
-    </header>
+      </Routes>
+      <Footer />
+    </BrowserRouter>
   )
 }
-const hidden = true
-export default () => (
-  <BrowserRouter>
-    <Leva hidden={hidden} />
-    <Header />
-    <Routes>
-      {routes.map(route => (
-        <Route
-          path={route.path}
-          key={route.path}
-          element={
-            <>
-              <div id="ui">
-                {/* Anything that goes into the tunnel, we want to render here. */}
-                <UI.Out />
-              </div>
 
-              <Canvas>
-                <ExampleWrapper>
-                  <route.component />
-                </ExampleWrapper>
-              </Canvas>
-            </>
-          }
-        />
-      ))}
-    </Routes>
-    <Footer />
-  </BrowserRouter>
-)
+export default App

@@ -1,6 +1,5 @@
-import { BoxGeometryProps } from "@react-three/fiber"
+import { BoxGeometryProps, Vector3 } from "@react-three/fiber"
 import { FC, useRef } from "react"
-import { Vector3 } from "three"
 import { useSun } from "../../hooks/use-sun"
 import { WaterMaterial } from "./Water.material"
 
