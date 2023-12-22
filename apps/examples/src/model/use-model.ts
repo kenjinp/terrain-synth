@@ -1,10 +1,8 @@
 import { useCallback, useEffect, useState } from "react"
-import { ImageStrategy } from "./Image.strategy"
 import { WGANStrategy } from "./WGAN.strategy"
 
 export const MODEL_STRATEGIES = {
   WGAN: WGANStrategy,
-  IMAGE: ImageStrategy,
 }
 
 export const MODEL_STRATEGY_NAMES = Object.keys(MODEL_STRATEGIES)
@@ -13,9 +11,9 @@ export function useModel(
   strategy: keyof typeof MODEL_STRATEGIES = "WGAN",
   seed?: string,
 ) {
-  const [terrainModel, setTerrainModel] = useState<
-    WGANStrategy | ImageStrategy
-  >(() => new MODEL_STRATEGIES[strategy]())
+  const [terrainModel, setTerrainModel] = useState<WGANStrategy>(
+    () => new MODEL_STRATEGIES[strategy](),
+  )
   const [state, setState] = useState(terrainModel.state)
   const [imageData, setImageData] = useState<ImageData | null>(null)
 
