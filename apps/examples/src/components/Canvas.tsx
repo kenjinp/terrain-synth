@@ -1,6 +1,6 @@
 import { Canvas as R3fCanvas, useThree } from "@react-three/fiber"
 import React, { Suspense } from "react"
-import { Color, PCFSoftShadowMap } from "three"
+import { Color } from "three"
 
 const Background: React.FC = () => {
   useThree(state => {
@@ -24,6 +24,7 @@ export const Canvas: React.FC<
       camera={{
         near: 0.01,
         far: Number.MAX_SAFE_INTEGER,
+        position: [-778.8166673411616, 5553.223843712609, 9614.949713806403],
       }}
       shadows="soft"
       shadow-camera-far={1000000}

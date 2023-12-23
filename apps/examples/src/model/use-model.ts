@@ -15,25 +15,33 @@ export function useModel(
     () => new MODEL_STRATEGIES[strategy](),
   )
   const [state, setState] = useState(terrainModel.state)
-  const [imageData, setImageData] = useState<ImageData | null>(null)
+  const [result, setImageData] = useState<{
+    terrainData: Uint8Array
+    oceanData: Uint8Array
+  } | null>(null)
 
   useEffect(() => {
     const model = new MODEL_STRATEGIES[strategy]()
     setTerrainModel(model)
     setState(model.state)
+    console.log("NEW MODEL")
+    return () => {
+      console.log("DESTROY MODEL")
+      model.worker.terminate()
+    }
   }, [strategy])
 
   const load = useCallback(
     async (seed?: string) => {
-      const imageData = await terrainModel.load(seed)
-      setImageData(imageData)
+      const result = await terrainModel.load(seed)
+      setImageData(result)
     },
     [terrainModel],
   )
   const run = useCallback(
     async (seed?: string) => {
-      const imageData = await terrainModel.run(seed)
-      setImageData(imageData)
+      const result = await terrainModel.run(seed)
+      setImageData(result)
     },
     [terrainModel],
   )
@@ -47,7 +55,7 @@ export function useModel(
 
   return {
     state,
-    imageData,
+    result,
     run,
   }
 }

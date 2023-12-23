@@ -12,8 +12,8 @@ import { getPixelColor, interpolateColor } from "./Home.colors"
 
 export type ThreadParams = {
   seed: string
-  terrainData: ImageData
-  oceanData: ImageData
+  terrainData: Uint8Array
+  oceanData: Uint8Array
   scaleMax: number
   biome: BIOMES
   useNoise: boolean
@@ -23,13 +23,9 @@ export type ThreadParams = {
 const heightGenerator: ChunkGenerator3Initializer<ThreadParams, number> = ({
   data: { seed, terrainData, oceanData, scaleMax, useNoise, useInterpolation },
 }) => {
-  const tData: ImageData = terrainData
-  const imageWidth = tData.width
-  const pixelData = new Uint8Array(tData.data.buffer)
   const tempVec = new Vector3()
+  const imageWidth = Math.floor(Math.sqrt(terrainData.length / 4))
 
-  const oData: ImageData = oceanData
-  const oceanPixelData = new Uint8Array(oData.data.buffer)
   const oceanNoise = new Noise({
     seed,
     noiseType: NOISE_TYPES.BILLOWING,
@@ -40,9 +36,9 @@ const heightGenerator: ChunkGenerator3Initializer<ThreadParams, number> = ({
   return ({ input, radius }) => {
     let height = 0
     const halfSize = radius
-    if (!tData) return height
-    let x = remap(input.x, -halfSize, halfSize, 0, tData.height - 1)
-    let y = remap(input.y, -halfSize, halfSize, 0, tData.height - 1)
+    if (!terrainData) return height
+    let x = remap(input.x, -halfSize, halfSize, 0, imageWidth - 1)
+    let y = remap(input.y, -halfSize, halfSize, 0, imageWidth - 1)
 
     // Convert the worldCoordinates input to the image coordinate space
     tempVec.set(x, y, input.z)
@@ -52,7 +48,7 @@ const heightGenerator: ChunkGenerator3Initializer<ThreadParams, number> = ({
         tempVec.x,
         tempVec.y,
         imageWidth,
-        pixelData,
+        terrainData,
         // biasNoise,
         useNoise,
       )
@@ -61,7 +57,7 @@ const heightGenerator: ChunkGenerator3Initializer<ThreadParams, number> = ({
         MathUtils.clamp(Math.floor(tempVec.x), 0, imageWidth - 1),
         MathUtils.clamp(Math.floor(tempVec.y), 0, imageWidth - 1),
         imageWidth,
-        pixelData,
+        terrainData,
       )
     }
     // sea level
@@ -71,7 +67,7 @@ const heightGenerator: ChunkGenerator3Initializer<ThreadParams, number> = ({
           tempVec.x,
           tempVec.y,
           imageWidth,
-          oceanPixelData,
+          oceanData,
           // biasNoise,
           useNoise,
         )
@@ -80,7 +76,7 @@ const heightGenerator: ChunkGenerator3Initializer<ThreadParams, number> = ({
           MathUtils.clamp(Math.floor(tempVec.x), 0, imageWidth - 1),
           MathUtils.clamp(Math.floor(tempVec.y), 0, imageWidth - 1),
           imageWidth,
-          oceanPixelData,
+          oceanData,
         )
       }
       const height64 = remap(height, 0, 255, 0, 1)

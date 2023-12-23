@@ -1,6 +1,10 @@
 import * as onnxruntimeWeb from "onnxruntime-web"
 import generator from "../assets/generator.onnx?url"
-import { createImageDataFromArray } from "./image"
+import { processImageData } from "../pages/home/Home.image"
+import {
+  convertImageDataToShardArrayBuffer,
+  createImageDataFromArray,
+} from "./image"
 import { generateStandardNormalArray } from "./math"
 
 // This is for the WGAN model
@@ -51,11 +55,24 @@ export async function runModel(
   console.timeEnd("inference")
   console.time("image")
   const outputBuffer = out[model.outputNames[0]].data as Float32Array
-  const result = createImageDataFromArray(modelImageOutputSize, outputBuffer)
+  console.time("terrainData")
+  const imageData = createImageDataFromArray(modelImageOutputSize, outputBuffer)
+  const terrainData = convertImageDataToShardArrayBuffer(imageData)
+  console.timeEnd("terrainData")
+  console.time("oceanData")
+  const oceanData = convertImageDataToShardArrayBuffer(
+    processImageData(imageData),
+  )
+  console.timeEnd("oceanData")
   console.timeEnd("image")
   postMessage({ state: MODEL_STATE.IDLE })
-  postMessage({ result })
-  return result
+  postMessage({
+    result: {
+      terrainData,
+      oceanData,
+    },
+  })
+  return { terrainData, oceanData }
 }
 let model: onnxruntimeWeb.InferenceSession
 
@@ -63,7 +80,10 @@ export async function loadModel(
   postMessage: (message: any) => void,
   seed?: string,
 ) {
-  let result: ImageData
+  let result: {
+    terrainData: Uint8Array
+    oceanData: Uint8Array
+  }
   // first try to load webgl
   // and run it
   // if it fails, fallback to wasm

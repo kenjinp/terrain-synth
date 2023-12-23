@@ -15,8 +15,8 @@ importers:
         specifier: ^0.0.23
         version: 0.0.23(@hello-worlds/core@0.0.9)(three@0.158.0)
       '@hello-worlds/react':
-        specifier: ^0.0.25
-        version: 0.0.25(@hello-worlds/core@0.0.9)(@hello-worlds/planets@0.0.23)(@react-three/drei@9.88.7)(@react-three/fiber@8.15.8)(react-dom@18.2.0)(react@18.2.0)(three@0.158.0)
+        specifier: ^0.0.26
+        version: 0.0.26(@hello-worlds/core@0.0.9)(@hello-worlds/planets@0.0.23)(@react-three/drei@9.88.7)(@react-three/fiber@8.15.8)(react-dom@18.2.0)(react@18.2.0)(three@0.158.0)
       '@react-three/drei':
         specifier: 9.88.7
         version: 9.88.7(@react-three/fiber@8.15.8)(@types/three@0.141.0)(react-dom@18.2.0)(react@18.2.0)(three@0.158.0)
@@ -932,8 +932,8 @@ packages:
       three-mesh-bvh: 0.5.24(three@0.158.0)
     dev: false
 
-  /@hello-worlds/react@0.0.25(@hello-worlds/core@0.0.9)(@hello-worlds/planets@0.0.23)(@react-three/drei@9.88.7)(@react-three/fiber@8.15.8)(react-dom@18.2.0)(react@18.2.0)(three@0.158.0):
-    resolution: {integrity: sha512-iy4f8h6Kz1Ly4fhiuGfdmX0ZLSpX82Eu3lgw71mwSJJi3H/wBVQr4cHGGoCqEhthbQRiX/nCDMn53O1gwBwbNA==}
+  /@hello-worlds/react@0.0.26(@hello-worlds/core@0.0.9)(@hello-worlds/planets@0.0.23)(@react-three/drei@9.88.7)(@react-three/fiber@8.15.8)(react-dom@18.2.0)(react@18.2.0)(three@0.158.0):
+    resolution: {integrity: sha512-sah5mDPE4RZeGWV0gRXePx7cxWOBnIBglmCLXBAOrMHp+PTHILhTOd/9N/YCpK9wTG7X4yflQjE8c7UtLUGYXw==}
     peerDependencies:
       '@hello-worlds/core': ^0.0.9
       '@hello-worlds/planets': ^0.0.23

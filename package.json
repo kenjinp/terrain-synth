@@ -21,7 +21,7 @@
   "dependencies": {
     "@hello-worlds/core": "^0.0.9",
     "@hello-worlds/planets": "^0.0.23",
-    "@hello-worlds/react": "^0.0.25",
+    "@hello-worlds/react": "^0.0.26",
     "@react-three/drei": "9.88.7",
     "@react-three/fiber": "8.15.8",
     "@react-three/postprocessing": "^2.15.11",

@@ -23,7 +23,12 @@ export class WGANStrategy {
     })
   }
 
-  command<T = ImageData>(command: string, message?: Record<string, any>) {
+  command<
+    T = {
+      terrainData: Uint8Array
+      oceanData: Uint8Array
+    },
+  >(command: string, message?: Record<string, any>) {
     return new Promise<T>((resolve, reject) => {
       this.worker.postMessage({ command, ...message })
       this.worker.onmessage = event => {

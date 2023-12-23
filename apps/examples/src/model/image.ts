@@ -132,3 +132,14 @@ export const getImageDataFromImg = (img: HTMLImageElement): ImageData => {
   context.drawImage(img, 0, 0)
   return context.getImageData(0, 0, img.width, img.height)
 }
+
+export const convertImageDataToShardArrayBuffer = (
+  imageData: ImageData,
+): Uint8Array => {
+  const { data } = imageData
+  const result = new Uint8Array(new SharedArrayBuffer(data.length))
+  for (let i = 0; i < data.length; i++) {
+    result[i] = data[i]
+  }
+  return result
+}

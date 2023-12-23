@@ -6,7 +6,7 @@ import { Color, Euler, Vector3 } from "three"
 
 import { Grid } from "@react-three/drei"
 import { useControls } from "leva"
-import React, { useEffect, useMemo, useRef, useState } from "react"
+import React, { useEffect, useMemo, useRef } from "react"
 import { match } from "ts-pattern"
 import { CloudScroller } from "../../components/clouds/CloudScroller"
 import { Compass } from "../../components/compass/Compass"
@@ -21,7 +21,6 @@ import {
 } from "../../model/use-model"
 import { UI } from "../../tunnel"
 import { BIOMES } from "./Home.biomes"
-import { createImageElementFromImageData, processImageData } from "./Home.image"
 import Worker from "./Home.worker?worker"
 
 const worker = () => new Worker()
@@ -51,31 +50,12 @@ const Home: React.FC<{ seed: string }> = ({ seed }) => {
     })
   const camera = useThree(state => state.camera)
   const flatWorld = useRef<HelloFlatWorld<any>>(null)
-  const { state, imageData } = useModel(
+  const { state, result } = useModel(
     strategy as keyof typeof MODEL_STRATEGIES,
     seed,
   )
 
-  const [terrainData, setTerrainData] = useState<ImageData | null>(null)
-  const [oceanData, setOceanData] = useState<ImageData | null>(null)
-  const [processingHeightmap, setProcessHeightmap] = useState(false)
   const size = 10_000
-
-  useEffect(() => {
-    if (!imageData) return
-    const processHeightmap = async () => {
-      console.time("Processing Heightmap")
-      setProcessHeightmap(true)
-      const oceanData = processImageData(imageData)
-      setOceanData(oceanData)
-      createImageElementFromImageData(oceanData)
-      setTerrainData(imageData)
-      createImageElementFromImageData(imageData)
-      setProcessHeightmap(false)
-      console.timeEnd("Processing Heightmap")
-    }
-    processHeightmap()
-  }, [imageData])
 
   const handleRegenerateTerrain = () => {
     setRandomSeed()
@@ -104,27 +84,22 @@ const Home: React.FC<{ seed: string }> = ({ seed }) => {
   const data = useMemo(() => {
     return {
       biome: BIOMES.SIM_CITY,
-      terrainData,
-      oceanData,
+      terrainData: result?.terrainData,
+      oceanData: result?.oceanData,
       scaleMax,
       useNoise,
       useInterpolation,
       seed,
     }
-  }, [terrainData, oceanData, scaleMax, useNoise, useInterpolation, seed])
+  }, [result, scaleMax, useNoise, useInterpolation, seed])
 
   const depth = scaleMax
-  camera.position.set(-778.8166673411616, 5553.223843712609, 9614.949713806403)
   const regenerateDisabled = state !== MODEL_STATE.IDLE
   let label = match(state)
     .with(MODEL_STATE.IDLE, () => "Regenerate Terrain (Enter)")
     .with(MODEL_STATE.RUNNING, () => "Generating Terrain")
     .with(MODEL_STATE.LOADING, () => "Loading Model")
     .otherwise(() => "Unknown State")
-
-  if (processingHeightmap) {
-    label = "Processing Heightmap / Oceanmap"
-  }
 
   return (
     <>
@@ -167,7 +142,7 @@ const Home: React.FC<{ seed: string }> = ({ seed }) => {
         rotation={new Euler().setFromVector3(new Vector3(-Math.PI / 2, 0, 0))}
         receiveShadow
       >
-        {terrainData && (
+        {result && (
           <FlatWorld
             ref={flatWorld}
             size={size}
