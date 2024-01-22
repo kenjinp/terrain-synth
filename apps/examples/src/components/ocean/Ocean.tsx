@@ -1,4 +1,4 @@
-import { BoxGeometryProps, Vector3 } from "@react-three/fiber"
+import { BoxGeometryProps, type Vector3 } from "@react-three/fiber"
 import { FC, useRef } from "react"
 import { useSun } from "../../hooks/use-sun"
 import { WaterMaterial } from "./Water.material"
@@ -6,7 +6,7 @@ import { WaterMaterial } from "./Water.material"
 export const Ocean: FC<{
   position: Vector3
   size: BoxGeometryProps["args"]
-}> = ({ position, size }) => {
+}> = ({ position = [0, 0, 0], size = [10, 1, 10] }) => {
   const light = useSun()
   const ref = useRef<THREE.Mesh>(null)
 

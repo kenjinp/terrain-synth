@@ -33,15 +33,23 @@ export function useModel(
 
   const load = useCallback(
     async (seed?: string) => {
-      const result = await terrainModel.load(seed)
-      setImageData(result)
+      try {
+        const result = await terrainModel.load(seed)
+        setImageData(result)
+      } catch (err) {
+        console.error(err)
+      }
     },
     [terrainModel],
   )
   const run = useCallback(
     async (seed?: string) => {
-      const result = await terrainModel.run(seed)
-      setImageData(result)
+      try {
+        const result = await terrainModel.run(seed)
+        setImageData(result)
+      } catch (err) {
+        console.error(err)
+      }
     },
     [terrainModel],
   )

@@ -26,7 +26,6 @@ class FogEffect extends Effect {
   camera: Camera
   directionalLight: DirectionalLight
   constructor({ camera, directionalLight }: FogEffectProps) {
-    console.log({ directionalLight })
     // camera gets added after construction in effect-composer
     if (camera) {
       camera.getWorldPosition(_position)

@@ -110,15 +110,27 @@ const colorGenerator: ChunkGenerator3Initializer<
     height: terrainNoiseFudgeHeight,
     scale: 1000,
   })
+  const terrainNoiseFudgeNoise = new Noise({
+    seed: "blah",
+    noiseType: NOISE_TYPES.RIGID,
+    height: terrainNoiseFudgeHeight,
+    scale: 10000,
+  })
+
+  const seaLevel = 3
+
   return ({ height, worldPosition }) => {
-    if (height < 5) {
+    const terrainNoiseFudge =
+      terrainNoiseFudgeNoise.getFromVector(worldPosition)
+    if (height < seaLevel) {
       return oceanSpline.get(remap(height, -100, 0, 1, 0))
     }
     // we dont want to fudge the color altitude for the ocean, so let's make sure we're a safe distance away
-    if (height > terrainNoiseFudgeHeight) {
+    if (height > terrainNoiseFudge) {
       height = height + colorNoise.getFromVector(worldPosition)
     }
     const remappedHeight = remap(height, 0, scaleMax, 0, 1)
+
     return colorSpline.get(remappedHeight)
     // return color.set(0xffffff * Math.random())
   }

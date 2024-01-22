@@ -22,7 +22,7 @@ const routes: IRoute[] = [
   },
 ]
 
-const hidden = true
+const hidden = false
 const App: React.FC = () => {
   return (
     <BrowserRouter>

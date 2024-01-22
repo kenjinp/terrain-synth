@@ -1,5 +1,5 @@
 import { FlatWorld as HelloFlatWorld } from "@hello-worlds/planets"
-import { FlatWorld } from "@hello-worlds/react"
+import { FlatWorld, useFlatWorldChunks } from "@hello-worlds/react"
 import { useThree } from "@react-three/fiber"
 import { Perf } from "r3f-perf"
 import { Color, Euler, Vector3 } from "three"
@@ -12,6 +12,7 @@ import { CloudScroller } from "../../components/clouds/CloudScroller"
 import { Compass } from "../../components/compass/Compass"
 import { Ocean } from "../../components/ocean/Ocean"
 import { Post } from "../../components/post/Post"
+import { Rivers } from "../../components/rivers/Rivers"
 import { useSeed } from "../../hooks/use-seed"
 import { MODEL_STATE } from "../../model/Model.gan"
 import {
@@ -23,14 +24,36 @@ import { UI } from "../../tunnel"
 import { BIOMES } from "./Home.biomes"
 import Worker from "./Home.worker?worker"
 
+const TestScatter: React.FC = () => {
+  const chunks = useFlatWorldChunks()
+
+  React.useEffect(() => {
+    for (const chunk of chunks) {
+      console.log({ chunk }, chunk.lodLevel, chunks.length)
+      // if (chunk.heightmap) {
+      //   console.log(
+      //     new ScatterMap("blah", chunk.heightmap, {
+      //       slopeMask: {
+      //         min: 0.1,
+      //         max: 0.5,
+      //       },
+      //     }),
+      //   )
+      // }
+    }
+  }, [chunks])
+
+  return null
+}
+
 const worker = () => new Worker()
 
-export default () => {
+export default function HomeWrapper() {
   const { seed } = useSeed()
   return seed ? <Home seed={seed} /> : null
 }
 
-const Home: React.FC<{ seed: string }> = ({ seed }) => {
+export const Home: React.FC<{ seed: string }> = ({ seed }) => {
   const { setRandomSeed } = useSeed()
   const { scaleMax, showPerf, useNoise, useInterpolation, strategy } =
     useControls({
@@ -146,14 +169,16 @@ const Home: React.FC<{ seed: string }> = ({ seed }) => {
           <FlatWorld
             ref={flatWorld}
             size={size}
-            minCellResolution={128}
-            minCellSize={64 * 6}
+            minCellResolution={2 ** 7}
+            minCellSize={2 ** 8}
             lodOrigin={camera.position}
             worker={worker}
             data={data}
             skirtDepth={depth}
           >
             <meshStandardMaterial vertexColors />
+            {/* <ChunkScatter targetLOD={4} /> */}
+            <Rivers />
           </FlatWorld>
         )}
       </group>
