@@ -1,5 +1,19 @@
 {
   "$schema": "https://triplex.dev/config.schema.json",
-  "components": ["../src/components/*.tsx"],
-  "files": ["../src/**/*.tsx"]
+  "components": ["../src/components/**/*.tsx"],
+  "files": ["../src/pages/**/*.tsx", "../src/components/**/*.tsx"],
+  "provider": "./provider.tsx",
+  "define": {
+    "__COMMIT_INFO__": {},
+    "__BUILD_INFO__": {}
+  },
+  "rendererAttributes": {
+    "gl": {
+      "logarithmicDepthBuffer": true,
+      "antialias": true,
+      "stencil": true,
+      "depth": true,
+      "alpha": true
+    }
+  }
 }

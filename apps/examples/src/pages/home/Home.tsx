@@ -1,11 +1,9 @@
 import { FlatWorld as HelloFlatWorld } from "@hello-worlds/planets"
 import { FlatWorld } from "@hello-worlds/react"
 import { useThree } from "@react-three/fiber"
-import { Perf } from "r3f-perf"
 import { Color, Euler, Vector3 } from "three"
 
 import { Grid } from "@react-three/drei"
-import { useControls } from "leva"
 import React, { useEffect, useMemo, useRef } from "react"
 import { match } from "ts-pattern"
 import { CloudScroller } from "../../components/clouds/CloudScroller"
@@ -14,46 +12,39 @@ import { Ocean } from "../../components/ocean/Ocean"
 import { Post } from "../../components/post/Post"
 import { useSeed } from "../../hooks/use-seed"
 import { MODEL_STATE } from "../../model/Model.gan"
-import {
-  MODEL_STRATEGIES,
-  MODEL_STRATEGY_NAMES,
-  useModel,
-} from "../../model/use-model"
+import { MODEL_STRATEGIES, useModel } from "../../model/use-model"
 import { UI } from "../../tunnel"
 import { BIOMES } from "./Home.biomes"
 import Worker from "./Home.worker?worker"
 
 const worker = () => new Worker()
 
-export default () => {
+export default function HomePage() {
   const { seed } = useSeed()
   return seed ? <Home seed={seed} /> : null
 }
 
-const Home: React.FC<{ seed: string }> = ({ seed }) => {
+export const Home: React.FC<{
+  seed: string
+  useNoise?: boolean
+  useInterpolation?: boolean
+  /**
+   * @min 0
+   * @max 2000
+   */
+  scaleMax?: number
+  strategy?: keyof typeof MODEL_STRATEGIES
+}> = ({
+  seed,
+  strategy = "WGAN",
+  useNoise = true,
+  useInterpolation = true,
+  scaleMax = 700,
+}) => {
   const { setRandomSeed } = useSeed()
-  const { scaleMax, showPerf, useNoise, useInterpolation, strategy } =
-    useControls({
-      scaleMax: {
-        value: 700,
-        min: 0,
-        max: 2000,
-      },
-      // showHeightmap: true,
-      model: false,
-      showPerf: false,
-      useNoise: true,
-      useInterpolation: true,
-      strategy: {
-        options: MODEL_STRATEGY_NAMES,
-      },
-    })
   const camera = useThree(state => state.camera)
-  const flatWorld = useRef<HelloFlatWorld<any>>(null)
-  const { state, result } = useModel(
-    strategy as keyof typeof MODEL_STRATEGIES,
-    seed,
-  )
+  const flatWorld = useRef<HelloFlatWorld<unknown>>(null)
+  const { state, result } = useModel(strategy, seed)
 
   const size = 10_000
 
@@ -95,7 +86,7 @@ const Home: React.FC<{ seed: string }> = ({ seed }) => {
 
   const depth = scaleMax
   const regenerateDisabled = state !== MODEL_STATE.IDLE
-  let label = match(state)
+  const label = match(state)
     .with(MODEL_STATE.IDLE, () => "Regenerate Terrain (Enter)")
     .with(MODEL_STATE.RUNNING, () => "Generating Terrain")
     .with(MODEL_STATE.LOADING, () => "Loading Model")
@@ -103,7 +94,6 @@ const Home: React.FC<{ seed: string }> = ({ seed }) => {
 
   return (
     <>
-      {showPerf && <Perf />}
       <Post />
       <Compass position={new Vector3(size, -depth, -size)} />
       <UI.In>
