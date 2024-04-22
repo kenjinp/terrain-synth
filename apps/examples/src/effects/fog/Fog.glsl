@@ -97,9 +97,6 @@ vec3 get_sun_direction(in vec3 pos)
     return dir;
 }
 
-	// vec3 shadowWorldNormal = inverseTransformDirection( transformedNormal, viewMatrix );
-	// vec4 shadowWorldPosition;
-
 vec2 boxIntersection( in vec3 ro, in vec3 rd, vec3 boxSize) 
 {
     vec3 m = 1.0/rd; // can precompute if traversing a set of aligned boxes
@@ -135,9 +132,6 @@ float easeInExpo(in float x) {
 
 
 vec4 rayMarch(in Ray ray, in vec3 box, in vec3 boxPosition, in float maxDistance, in vec3 scene_color) {
-   
-    // light stuff
-    // light_color = SUN_COLOR;
    
     float distanceTraveled = 0.0;
     vec3 color = vec3(0.0, 0.0, 0.0);
@@ -236,11 +230,6 @@ vec4 rayMarch(in Ray ray, in vec3 box, in vec3 boxPosition, in float maxDistance
       float lightRayIntersectionFar = intersection.y;
       bool objectInFront = maxDistance < intersectionNear;
 
-      // // no intersection
-      // if (intersection == vec2(-1.0)) return vec4(accum, 1.0);
-      // // terrain or other mesh in front of the sdf box
-      // if (objectInFront) return vec4(accum, 1.0);
-
       Ray lightBegin = Ray(currentPosition + sun.direction * lightRayIntersectionNear, sun.direction);
       // if we're inside the box, start at the input ray origin
       if (lightRayIntersectionNear < 0.0) {
@@ -301,40 +290,6 @@ vec4 rayMarch(in Ray ray, in vec3 box, in vec3 boxPosition, in float maxDistance
       // accumulate the scattered light (how much will be scattered towards the camera)
       total_ray += density.x * attn;
       total_mie += density.y * attn;
-
-
-      // float height_factor = clamp(remap(height, 400.0, 10000.0, 1.0, 0.0), 0.0, 1.0);
-      // height_factor = easeInExpo(height_factor);
-      
-      // // shadow stuff
-      // vec4 shadowWorldPosition = vec4(currentPosition, 1.0) + vec4( shadowWorldNormal * uDirectionalLightShadow.normalBias, 0. ); //+ vec4(offset, 0.); // <-- see offset
-      // vec4 directionalShadowCoord = uDirectionalShadowMatrix * shadowWorldPosition;
-
-      // // vec4 shadowCoord = uDirectionalShadowMatrix * vec4(currentPosition, 1.0);
-      // directionalShadowCoord.xyz /= directionalShadowCoord.w;
-
-      // float shadowDepth = texture(uDirectionalShadowMap, directionalShadowCoord.xy).r;
-      // // shadowDepth = unpackRGBAToDepth( texture2D( uDirectionalShadowMap, shadowCoord.xy ) );
-      // shadowDepth = unpackRGBAToDepth( texture2D( uDirectionalShadowMap, directionalShadowCoord.xy ) );
-
-      // float dianceToSun = length(uSunPosition - currentPosition);
-
-      // // only accumulate if we're in the atmosphere
-  
-      // vec3 sky = SKY_COLOR * (height_factor * 0.2) * stepSize;
-      // vec3 sun = SUN_COLOR * sun_phase * (height_factor * 0.5 )  * stepSize;
-      
-      // // accum += sky * fog;
-      // // accum += sun * fog;
-
-      //           // Point is in shadow
-      //   if (shadowDepth < directionalShadowCoord.z) {
-      //       // accum += SHADOW_COLOR * vec3(shadowDepth);
-      //   } else {
-      //       accum += sky * fog;
-      //       accum += sun * fog;
-      //   }
-      // accum += SHADOW_COLOR * vec3(shadowDepth);
     }
 
     // calculate how much light can pass through the atmosphere
